@@ -1,12 +1,13 @@
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
-import { useColorScheme, PlatformColor, Platform } from 'react-native';
+import {NativeTabs} from 'expo-router/unstable-native-tabs';
+import {useColorScheme} from 'react-native';
 
-import { Colors } from '@/constants/theme';
+import {Colors} from '@/constants/theme';
+import {useTranslation} from "react-i18next";
 
 export default function AppTabs() {
     const scheme = useColorScheme();
     const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
-
+    const {t} = useTranslation();
 
     return (
         <NativeTabs
@@ -17,12 +18,14 @@ export default function AppTabs() {
                 selected: colors.iconSelected
             }}
             labelStyle={{
-                default: { color: colors.text },
-                selected: { color: colors.textSelected }
+                default: {color: colors.text},
+                selected: {color: colors.textSelected}
             }}>
 
             <NativeTabs.Trigger name="index">
-                <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+                <NativeTabs.Trigger.Label>
+                    {t('tab-bar.home')}
+                </NativeTabs.Trigger.Label>
                 <NativeTabs.Trigger.Icon
                     src={require('@/assets/images/tabIcons/home.png')}
                     renderingMode="template"
@@ -30,7 +33,9 @@ export default function AppTabs() {
             </NativeTabs.Trigger>
 
             <NativeTabs.Trigger name="services">
-                <NativeTabs.Trigger.Label>Services</NativeTabs.Trigger.Label>
+                <NativeTabs.Trigger.Label>
+                    {t('tab-bar.services')}
+                </NativeTabs.Trigger.Label>
                 <NativeTabs.Trigger.Icon
                     src={require('@/assets/images/tabIcons/service.png')}
                     renderingMode="template"
@@ -38,7 +43,7 @@ export default function AppTabs() {
             </NativeTabs.Trigger>
 
             <NativeTabs.Trigger name="qr">
-                <NativeTabs.Trigger.Label hidden />
+                <NativeTabs.Trigger.Label hidden/>
                 <NativeTabs.Trigger.Icon
                     src={require('@/assets/images/tabIcons/qr_ios.png')}
                     renderingMode="original"
@@ -46,7 +51,9 @@ export default function AppTabs() {
             </NativeTabs.Trigger>
 
             <NativeTabs.Trigger name="cars">
-                <NativeTabs.Trigger.Label>Cars</NativeTabs.Trigger.Label>
+                <NativeTabs.Trigger.Label>
+                    {t('tab-bar.cars')}
+                </NativeTabs.Trigger.Label>
                 <NativeTabs.Trigger.Icon
                     src={require('@/assets/images/tabIcons/car.png')}
                     renderingMode="template"
@@ -54,7 +61,9 @@ export default function AppTabs() {
             </NativeTabs.Trigger>
 
             <NativeTabs.Trigger name="more">
-                <NativeTabs.Trigger.Label>More</NativeTabs.Trigger.Label>
+                <NativeTabs.Trigger.Label>
+                    {t('tab-bar.more')}
+                </NativeTabs.Trigger.Label>
                 <NativeTabs.Trigger.Icon
                     src={require('@/assets/images/tabIcons/more.png')}
                     renderingMode="template"

@@ -1,0 +1,8 @@
+{
+  "tab-bar": {
+    "home": "Home",
+    "services": "Services",
+    "cars": "Cars",
+    "more": "More"
+  }
+}

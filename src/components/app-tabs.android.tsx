@@ -4,21 +4,22 @@ import {TabButton} from "@/components/tab-button";
 import {usePathname} from "expo-router";
 import {useSharedValue} from 'react-native-reanimated';
 import {Colors} from "@/constants/theme";
-
-const routes = [
-    {name: 'home', href: '/', label: 'Home'},
-    {name: 'services', href: '/services', label: 'Services'},
-    {name: 'placeholder', href: '#', label: ''},
-    {name: 'cars', href: '/cars', label: 'Cars'},
-    {name: 'more', href: '/more', label: 'More'},
-];
+import {useTranslation} from "react-i18next";
 
 export default function AppTabs() {
     const pathname = usePathname();
     const scheme = useColorScheme();
     const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
     const barWidth = useSharedValue(0);
+    const { t } = useTranslation();
 
+    const routes = [
+        { name: 'home', href: '/', label: t('tab-bar.home') },
+        { name: 'services', href: '/services', label: t('tab-bar.services') },
+        { name: 'placeholder', href: '#', label: '' },
+        { name: 'cars', href: '/cars', label: t('tab-bar.cars') },
+        { name: 'more', href: '/more', label: t('tab-bar.more') },
+    ];
     const onLayoutBar = (event: LayoutChangeEvent) => {
         barWidth.value = event.nativeEvent.layout.width;
     };
@@ -45,7 +46,7 @@ export default function AppTabs() {
                         }
                         return (
                             <TabTrigger key={r.name} name={r.name} asChild>
-                                <TabButton label={r.label} focused={pathname === r.href}/>
+                                <TabButton label={r.label} name={r.name} focused={pathname === r.href}/>
                             </TabTrigger>
                         );
                     })}
@@ -55,6 +56,7 @@ export default function AppTabs() {
                     <TabTrigger name="qr" asChild>
                         <TabButton
                             label="QR"
+                            name="qr"
                             focused={pathname === '/qr'}
                             isFloating={true}
                         />

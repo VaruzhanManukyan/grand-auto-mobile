@@ -5,21 +5,23 @@ import {Colors} from "@/constants/theme";
 
 type Props = PressableProps & {
     label: string;
+    name: string;
     focused: boolean;
     isFloating?: boolean;
     isDark?: boolean;
 };
 
 const iconMap: Record<string, any> = {
-    Home: require('@/assets/images/tabIcons/home.png'),
-    Services: require('@/assets/images/tabIcons/service.png'),
-    QR: require('@/assets/images/tabIcons/qr.png'),
-    Cars: require('@/assets/images/tabIcons/car.png'),
-    More: require('@/assets/images/tabIcons/more.png'),
+    home: require('@/assets/images/tabIcons/home.png'),
+    services: require('@/assets/images/tabIcons/service.png'),
+    qr: require('@/assets/images/tabIcons/qr.png'),
+    cars: require('@/assets/images/tabIcons/car.png'),
+    more: require('@/assets/images/tabIcons/more.png'),
 };
 
 export const TabButton = forwardRef<View, Props>(({
                                                       label,
+                                                      name,
                                                       focused,
                                                       isFloating = false,
                                                       ...props
@@ -51,7 +53,7 @@ export const TabButton = forwardRef<View, Props>(({
         };
     });
 
-    const iconSource = iconMap[label];
+    const iconSource = iconMap[name];
     const iconSize = isFloating ? 28 : 24;
 
     const buttonStyle = isFloating
@@ -67,7 +69,7 @@ export const TabButton = forwardRef<View, Props>(({
     const iconColor = isFloating
         ? '#FFFFFF'
         : (focused ? activeColor : colors.text);
-    
+
     return (
         <Pressable ref={ref} {...props} style={buttonStyle}>
             <Animated.View style={animatedIconStyle}>

@@ -10,6 +10,13 @@ import { Collapsible } from '@/components/ui/collapsible';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import {
+  BonusBannerSkeleton,
+  CarCardSkeleton,
+  ProfileSkeleton,
+  ServiceCardSkeleton, ServicesListSkeleton,
+  SkeletonBlock
+} from "@/components/loading";
 
 export default function TabTwoScreen() {
   const safeAreaInsets = useSafeAreaInsets();
@@ -43,6 +50,11 @@ export default function TabTwoScreen() {
           <ThemedText style={styles.centerText} themeColor="textSecondary">
             This starter app includes example{'\n'}code to help you get started.
           </ThemedText>
+          <ServiceCardSkeleton></ServiceCardSkeleton>
+          <CarCardSkeleton></CarCardSkeleton>
+          <ProfileSkeleton></ProfileSkeleton>
+          <BonusBannerSkeleton></BonusBannerSkeleton>
+          <ServicesListSkeleton></ServicesListSkeleton>
 
           <ExternalLink href="https://docs.expo.dev" asChild>
             <Pressable style={({ pressed }) => pressed && styles.pressed}>
