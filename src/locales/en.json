@@ -4,5 +4,56 @@
     "services": "Services",
     "cars": "Cars",
     "more": "More"
+  },
+  "auth": {
+    "brand": "Grand Auto",
+    "title": {
+      "idle": "Sign In & Register",
+      "otp": "Enter the Code",
+      "profile": "Complete your Profile",
+      "social_profile": "Complete Profile"
+    },
+    "subtitle": {
+      "idle": "Email, Google or Apple — same auth-flow",
+      "otp": "We sent a code to your email",
+      "profile": "New account needs first name, last name and phone",
+      "social_profile": "After Google / Apple we need your phone, and name if needed"
+    },
+    "email_label": "Email",
+    "email_placeholder": "you@example.com",
+    "code_label": "Code from email",
+    "code_placeholder": "123456",
+    "phone_continue": "continue",
+    "first_name_label": "First Name",
+    "first_name_placeholder": "Arman",
+    "last_name_label": "Last Name",
+    "last_name_placeholder": "Petrosyan",
+    "phone_label": "Phone",
+    "phone_placeholder": "+374 12 123 123",
+    "continue_email": "Continue with Email",
+    "sending": "Sending code...",
+    "verify_code": "Verify Code",
+    "verifying": "Verifying...",
+    "back": "Back",
+    "complete_registration": "Complete Registration",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "google_login": "Continue with Google",
+    "apple_login": "Continue with Apple",
+    "or": "or",
+    "errors": {
+      "email_required": "Email is required",
+      "email_already_registered": "Email already registered",
+      "user_not_found": "User not found",
+      "email_invalid": "Please enter a valid email",
+      "code_required": "Code is required",
+      "code_min": "Code must be at least 6 digits",
+      "first_name_required": "First name is required",
+      "first_name_min": "First name must be at least 2 characters",
+      "last_name_required": "Last name is required",
+      "last_name_min": "Last name must be at least 2 characters",
+      "phone_required": "Phone number is required",
+      "phone_min": "Phone number must be at least 5 characters"
+    }
   }
 }

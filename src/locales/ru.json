@@ -4,5 +4,57 @@
     "services": "Сервисы",
     "cars": "Автомобили",
     "more": "Более"
+  },
+  "auth": {
+    "brand": "Grand Auto",
+    "title": {
+      "idle": "Вход и регистрация",
+      "otp": "Введите код",
+      "profile": "Заполните профиль",
+      "social_profile": "Дополните профиль"
+    },
+    "subtitle": {
+      "idle": "Email, Google или Apple — один и тот же auth-flow",
+      "otp": "Мы отправили код на email",
+      "profile": "Для нового аккаунта нужны имя, фамилия и телефон",
+      "social_profile": "После Google / Apple нужен телефон, и при необходимости имя"
+    },
+    "email_label": "Email",
+    "email_placeholder": "you@example.com",
+    "code_label": "Код из письма",
+    "code_placeholder": "123456",
+    "phone_continue": "продолжать",
+    "first_name_label": "Имя",
+    "first_name_placeholder": "Арман",
+    "last_name_label": "Фамилия",
+    "last_name_placeholder": "Петросян",
+    "phone_label": "Телефон",
+    "phone_placeholder": "+374 12 123 123",
+    "continue_email": "Продолжить по email",
+    "sending": "Отправляем код...",
+    "verify_code": "Подтвердить код",
+    "verifying": "Проверяем...",
+    "back": "Назад",
+    "complete_registration": "Завершить регистрацию",
+    "saving": "Сохраняем...",
+    "cancel": "Отмена",
+    "google_login": "Войти через Google",
+    "apple_login": "Войти через Apple",
+    "or": "или",
+    "errors": {
+      "incorrect_token": "неверный токен",
+      "email_already_registered": "Email уже зарегистрирован",
+      "user_not_found": "User not found",
+      "email_required": "Требуется email",
+      "email_invalid": "Введите корректный email",
+      "code_required": "Требуется код",
+      "code_min": "Код должен содержать минимум 6 цифры",
+      "first_name_required": "Требуется имя",
+      "first_name_min": "Имя должно содержать минимум 2 символа",
+      "last_name_required": "Требуется фамилия",
+      "last_name_min": "Фамилия должна содержать минимум 2 символа",
+      "phone_required": "Требуется номер телефона",
+      "phone_min": "Номер телефона должен содержать минимум 5 символов"
+    }
   }
 }

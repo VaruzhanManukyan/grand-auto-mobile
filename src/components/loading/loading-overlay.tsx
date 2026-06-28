@@ -20,8 +20,12 @@ export function LoadingOverlay({
 
     if (!visible) return null;
 
-    const overlayBg = currentTheme === 'dark' ? 'rgba(10,10,10,0.85)' : 'rgba(245,245,245,0.85)';
+    const overlayBg = currentTheme === 'dark' ? 'rgb(10 10 10)' : 'rgb(245 245 245)';
     const bgColor = mode === 'full' ? colors.background : overlayBg;
+    const animation =
+        currentTheme === 'dark'
+            ? require('@/assets/dark-loading.json')
+            : require('@/assets/light-loading.json');
 
     return (
         <Modal transparent animationType="fade" visible={visible} statusBarTranslucent>
@@ -29,8 +33,8 @@ export function LoadingOverlay({
 
                 <View style={styles.animationContainer}>
                     <LottieView
-                        source={require('@/assets/loading.json')}
-                        autoPlay
+                        source={animation}
+                        autoPlay                                                            
                         loop
                         style={styles.lottie}
                     />

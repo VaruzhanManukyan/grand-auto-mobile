@@ -1,13 +1,14 @@
 import * as Device from 'expo-device';
-import {Platform, StyleSheet} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { Platform, StyleSheet, TouchableOpacity } from 'react-native'; // 1. Imported TouchableOpacity
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import {AnimatedIcon} from '@/components/animated-icon';
-import {HintRow} from '@/components/hint-row';
-import {ThemedText} from '@/components/themed-text';
-import {ThemedView} from '@/components/themed-view';
-import {WebBadge} from '@/components/web-badge';
-import {BottomTabInset, MaxContentWidth, Spacing} from '@/constants/theme';
+import { AnimatedIcon } from '@/components/animated-icon';
+import { HintRow } from '@/components/hint-row';
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { WebBadge } from '@/components/web-badge';
+import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useAuthStore } from '@/store/auth.store'; // 2. Imported useAuthStore
 
 function getDevMenuHint() {
     if (Platform.OS === 'web') {
@@ -29,6 +30,9 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
+    // 3. Extracted the logout action from the store
+    const logout = useAuthStore(s => s.logout);
+
     return (
         <ThemedView style={styles.container}>
             <SafeAreaView style={styles.safeArea}>
@@ -54,6 +58,15 @@ export default function HomeScreen() {
                         hint={<ThemedText type="code">npm run reset-project</ThemedText>}
                     />
                 </ThemedView>
+
+                {/* 4. Added Logout Button UI Component */}
+                <TouchableOpacity
+                    style={styles.logoutButton}
+                    onPress={logout}
+                    activeOpacity={0.7}
+                >
+                    <ThemedText style={styles.logoutText}>Log Out</ThemedText>
+                </TouchableOpacity>
 
                 {Platform.OS === 'web' && <WebBadge/>}
             </SafeAreaView>
@@ -95,4 +108,18 @@ const styles = StyleSheet.create({
         paddingVertical: Spacing.four,
         borderRadius: Spacing.four,
     },
+    // 5. Appended styles for the logout element
+    logoutButton: {
+        alignSelf: 'stretch',
+        backgroundColor: '#ff4d4f', // Red tint for a clean destructive action look
+        paddingVertical: Spacing.three,
+        borderRadius: Spacing.four,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: Spacing.two,
+    },
+    logoutText: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+    }
 });
