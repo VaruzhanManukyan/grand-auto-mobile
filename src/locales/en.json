@@ -55,5 +55,37 @@
       "phone_required": "Phone number is required",
       "phone_min": "Phone number must be at least 5 characters"
     }
+  },
+  "loyalty": {
+    "activeBonuses": "Active bonuses",
+    "speedometer": {
+      "unit": "AMD"
+    },
+    "status": {
+      "novice": "Starter",
+      "driver": "Driver",
+      "master": "Master",
+      "schumacher": "Schumacher"
+    },
+    "toNextLevel": "Until the next level: {{amount}} AMD",
+    "maxLevelReached": "You have reached the highest level",
+    "totalBonuses": "Bonuses accumulated",
+    "rulesButton": "Rules",
+    "rulesScreen": {
+      "levelCard": {
+        "bonus": "+{{percent}}% cashback",
+        "unbound": "From {{from}} ֏"
+      },
+      "howItWorks": {
+        "title": "HOW IT WORKS",
+        "step1Title": "1. Show your QR code",
+        "step1Desc": "Open this page and show your QR code to the staff before paying for services.",
+        "step2Title": "2. Earn points",
+        "step2Desc": "Get bonus points on your account for every paid purchase.",
+        "step3Title": "3. Level up",
+        "step3Desc": "The more you spend in total, the higher your loyalty level and cashback percentage."
+      }
+    }
+
   }
 }

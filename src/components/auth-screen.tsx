@@ -470,7 +470,6 @@ export default function AuthScreen() {
                         </>
                     )}
 
-                    {/* ── OTP ── */}
                     {step === 'otp' && (
                         <>
                             <Field

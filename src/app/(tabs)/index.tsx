@@ -1,14 +1,14 @@
 import * as Device from 'expo-device';
-import { Platform, StyleSheet, TouchableOpacity } from 'react-native'; // 1. Imported TouchableOpacity
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {Platform, StyleSheet, TouchableOpacity} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useAuthStore } from '@/store/auth.store'; // 2. Imported useAuthStore
+import {AnimatedIcon} from '@/components/animated-icon';
+import {HintRow} from '@/components/hint-row';
+import {ThemedText} from '@/components/themed-text';
+import {ThemedView} from '@/components/themed-view';
+import {WebBadge} from '@/components/web-badge';
+import {BottomTabInset, MaxContentWidth, Spacing} from '@/constants/theme';
+import {useAuthStore} from '@/store/auth.store';
 
 function getDevMenuHint() {
     if (Platform.OS === 'web') {
@@ -30,7 +30,6 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
-    // 3. Extracted the logout action from the store
     const logout = useAuthStore(s => s.logout);
 
     return (
@@ -59,7 +58,6 @@ export default function HomeScreen() {
                     />
                 </ThemedView>
 
-                {/* 4. Added Logout Button UI Component */}
                 <TouchableOpacity
                     style={styles.logoutButton}
                     onPress={logout}

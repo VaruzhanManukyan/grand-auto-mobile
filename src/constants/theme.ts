@@ -9,6 +9,8 @@ import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
+    primary: "#ff0000",
+    card: "#FFFFFF",
     icon: "#000000",
     iconSelected: '#ff0000',
     text: '#000000',
@@ -23,8 +25,20 @@ export const Colors = {
     skeletonHighlight: '#F5F5F5',
     cardBackground: '#FFFFFF',
     cardBorder: '#C8102E18',
+    mode: 'light',
+    surface: '#FFFFFF',
+    textPrimary: '#15171C',
+    accent: '#ff0000',
+    accentSoft: 'rgb(232 61 61 / 0.16)',
+    border: '#E7E2D8',
+    borderAccent: '#272E40',
+    scanLine: '#ff0000',
+    qrBackground: '#FFFFFF',
+    qrForeground: '#15171C',
   },
   dark: {
+    primary: "#ff0000",
+    card: "#FFFFFF",
     icon: "#ffffff",
     iconSelected: '#ff0000',
     text: '#ffffff',
@@ -39,6 +53,16 @@ export const Colors = {
     skeletonHighlight: '#2C2C2C',
     cardBackground: '#161616',
     cardBorder: '#C8102E18',
+    mode: 'dark',
+    surface: '#000000',
+    textPrimary: '#F4F4F5',
+    accent: '#ff0000',
+    accentSoft: 'rgb(242 68 68 / 0.18)',
+    border: '#272E40',
+    borderAccent: '#E7E2D8',
+    scanLine: '#ff0000',
+    qrBackground: '#FFFFFF',
+    qrForeground: '#0B0E16',
   },
 } as const;
 

@@ -1,20 +1,10 @@
-/**
- * services/auth.service.ts
- *
- * ┌──────────────────────────────────────────────────────────────────────────┐
- * │  MOCK IMPLEMENTATION                                                     │
- * │  When switching to real backend: replace each method body with a          │
- * │  fetch() call. Method signatures and return types stay IDENTICAL.          │
- * └──────────────────────────────────────────────────────────────────────────┘
- */
-
-import {dbGet, dbSet, KEYS} from '@/mock/db';
+import {dbGet, dbSet, KEYS} from '@/mocks/db';
 import {
     storeMockOtp, verifyMockOtp,
     generateMockTokens, generateMockTempToken, extractEmailFromMockTempToken,
     extractUserIdFromMockToken,
     MOCK_GOOGLE_USER, MOCK_APPLE_USER,
-} from '@/mock/auth.mock';
+} from '@/mocks/auth.mock';
 import {
     AuthUser, AuthTokens, OtpVerifyResult,
     ProfileData, SocialLoginResult,
@@ -31,24 +21,12 @@ async function initLoyalty(userId: string) {
 }
 
 export const authService = {
-
-    // ── Email OTP flow ─────────────────────────────────────────────────────────
-
-    /**
-     * MOCK:  generates OTP, logs it to console.
-     * REAL:  POST /auth/otp/send  { email }  →  204 No Content
-     */
     async sendOtp(email: string): Promise<void> {
         await delay(800);
         const code = storeMockOtp(email);
         console.log(`[DEV OTP] ${email} → ${code}   (or use 123456)`);
     },
 
-    /**
-     * MOCK:  checks in-memory OTP store, looks up user in AsyncStorage.
-     * REAL:  POST /auth/otp/verify  { email, code }
-     * → { isNewUser, tokens?, user?, tempToken? }
-     */
     async verifyOtp(email: string, code: string): Promise<OtpVerifyResult> {
         await delay(700);
 
@@ -60,13 +38,11 @@ export const authService = {
         const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
         if (found) {
-            // Existing user → issue tokens immediately
             const {password: _, ...user} = found;
             const tokens = generateMockTokens(user.id);
             return {isNewUser: false, tokens, user};
         }
 
-        // New user → temp token; frontend must call completeProfile next
         return {
             isNewUser: true,
             tempToken: generateMockTempToken(email),
@@ -74,13 +50,6 @@ export const authService = {
         };
     },
 
-    /**
-     * Called after OTP for new email users (they need to fill in their name + phone).
-     *
-     * MOCK:  creates user in AsyncStorage.
-     * REAL:  POST /auth/otp/complete-profile  { tempToken, firstName, lastName, phone }
-     * → { tokens, user }
-     */
     async completeProfile(
         tempToken: string,
         profile: ProfileData,
@@ -108,11 +77,6 @@ export const authService = {
         return {tokens: generateMockTokens(newUser.id), user: newUser};
     },
 
-    // ── Social login ───────────────────────────────────────────────────────────
-
-    /**
-     * MOCK: simulates the server's response directly.
-     */
     async loginWithGoogle(): Promise<SocialLoginResult> {
         await delay(900);
 
@@ -135,9 +99,6 @@ export const authService = {
         };
     },
 
-    /**
-     * MOCK: simulates the server's response directly.
-     */
     async loginWithApple(): Promise<SocialLoginResult> {
         await delay(900);
 
@@ -160,9 +121,6 @@ export const authService = {
         };
     },
 
-    /**
-     * Called after social login for new social users (they need to add their phone).
-     */
     async completeSocialProfile(userId: string, profile: ProfileData): Promise<AuthUser> {
         await delay(500);
 
@@ -177,11 +135,6 @@ export const authService = {
         return user;
     },
 
-    // ── Session ────────────────────────────────────────────────────────────────
-
-    /**
-     * Called on app start after token refresh. Returns the current user.
-     */
     async getMe(accessToken: string): Promise<AuthUser | null> {
         await delay(200);
 
@@ -194,18 +147,12 @@ export const authService = {
         return user;
     },
 
-    /**
-     * MOCK:  generates new mock tokens from the userId embedded in the old token.
-     */
     async refreshToken(refreshToken: string): Promise<AuthTokens> {
         await delay(300);
         const userId = refreshToken.split('.')[1] ?? 'unknown';
         return generateMockTokens(userId);
     },
 
-    /**
-     * MOCK:  noop (no server to call).
-     */
     async logout(_refreshToken: string): Promise<void> {
         await delay(200);
     },

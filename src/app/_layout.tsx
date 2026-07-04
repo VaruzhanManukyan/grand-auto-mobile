@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {Stack, router, useRootNavigationState} from 'expo-router';
 import {I18nextProvider} from 'react-i18next';
 import i18n from 'i18next';
-import {initMockDB} from '@/mock/db';
+import {initMockDB} from '@/mocks/db';
 import {initI18n, needsLanguagePicker} from '@/utils/i18n';
 import {useAuthStore} from '@/store/auth.store';
 import LanguagePicker from '@/components/language-picker';
@@ -23,7 +23,7 @@ export default function RootLayout() {
             await initI18n();
             await init();
             const needsPicker = await needsLanguagePicker();
-            setShowLangPicker(needsPicker);
+            setShowLangPicker(true);
             setAppReady(true);
         })();
     }, []);
