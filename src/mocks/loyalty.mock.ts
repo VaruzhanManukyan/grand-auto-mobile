@@ -11,6 +11,6 @@ export const mockLoyaltyUser: LoyaltyUser = {
     id: 'usr_1001',
     fullName: 'Վարուժան Մելիքյան',
     qrValue: 'GRANDAUTO:usr_1001:LOYALTY',
-    totalBonusesEarned: 160000,
-    currentBonusBalance: 42_500,
+    totalBonusesEarned: 345000,
+    currentBonusBalance: 30000,
 };

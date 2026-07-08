@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     View,
     Text,
@@ -6,11 +6,12 @@ import {
     Dimensions,
     useWindowDimensions,
     Pressable,
+    ScrollView,
 } from 'react-native';
-import {LinearGradient} from 'expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
-import Svg, {Circle, Defs, Pattern, Rect, Path, LinearGradient as SvgGradient, Stop} from 'react-native-svg';
-import {Ionicons} from '@expo/vector-icons';
+import Svg, { Circle, Defs, Pattern, Rect, Path, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
+import { Ionicons } from '@expo/vector-icons';
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
@@ -24,15 +25,16 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import * as Brightness from 'expo-brightness';
-import {useFocusEffect, useRouter, Stack} from 'expo-router';
-import {useTranslation} from 'react-i18next';
+import { useFocusEffect, useRouter, Stack } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
-import {useTheme} from '@/hooks/use-theme';
-import {ScanLine} from '@/components/scan-line';
-import {useLoyaltyStore} from '@/store/loyalty.store';
-import {LoadingOverlay} from "@/components/loading";
+import { useTheme } from '@/hooks/use-theme';
+import { ScanLine } from '@/components/scan-line';
+import { useLoyaltyStore } from '@/store/loyalty.store';
+import { LoadingOverlay } from "@/components/loading";
+import {useRepairsStore} from "@/store/repairs.store";
 
-const {width: SCREEN_WIDTH} = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const QR_SIZE = Math.min(SCREEN_WIDTH * 0.6, 230);
 const CARD_PADDING = 24;
 const CODE_LIFETIME = 60;
@@ -55,7 +57,7 @@ function formatCode(code: string): string {
 }
 
 function useSpeedometerGeometry() {
-    const {width: screenWidth} = useWindowDimensions();
+    const { width: screenWidth } = useWindowDimensions();
 
     return useMemo(() => {
         const svgWidth = Math.min(Math.max(screenWidth * 0.58, 190), 260);
@@ -64,7 +66,7 @@ function useSpeedometerGeometry() {
         const svgHeight = BASE_SVG_HEIGHT * scale;
         const radius = BASE_RADIUS * scale;
         const centerX = svgWidth / 2;
-        const centerY = centerX; // same ratio as the original design
+        const centerY = centerX;
 
         const circumference = 2 * Math.PI * radius;
         const arcLength = (GAUGE_ANGLE / 360) * circumference;
@@ -117,18 +119,18 @@ function GlowOrb({
         t.value = withDelay(
             delay,
             withRepeat(
-                withTiming(1, {duration, easing: Easing.inOut(Easing.sin)}),
+                withTiming(1, { duration, easing: Easing.inOut(Easing.sin) }),
                 -1,
                 true,
             ),
         );
-    }, []);
+    }, [delay, duration, t]);
 
     const animStyle = useAnimatedStyle(() => {
         const scale = interpolate(t.value, [0, 1], [0.85, 1.15]);
         const translateY = interpolate(t.value, [0, 1], [0, 16]);
         const opacity = interpolate(t.value, [0, 1], [0.3, 0.55]);
-        return {transform: [{scale}, {translateY}], opacity};
+        return { transform: [{ scale }, { translateY }], opacity };
     });
 
     return (
@@ -150,7 +152,7 @@ function GlowOrb({
     );
 }
 
-function CarBackground({theme}: { theme: any }) {
+function CarBackground({ theme }: { theme: any }) {
     return (
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
             <Svg style={StyleSheet.absoluteFill} width="100%" height="100%">
@@ -161,22 +163,22 @@ function CarBackground({theme}: { theme: any }) {
                         height={26}
                         patternUnits="userSpaceOnUse"
                     >
-                        <Circle cx={2} cy={2} r={1.1} fill={theme.textSecondary} opacity={0.12}/>
+                        <Circle cx={2} cy={2} r={1.1} fill={theme.textSecondary} opacity={0.12} />
                     </Pattern>
                 </Defs>
-                <Rect x="0" y="0" width="100%" height="100%" fill="url(#dotGrid)"/>
+                <Rect x="0" y="0" width="100%" height="100%" fill="url(#dotGrid)" />
             </Svg>
 
             <GlowOrb
                 color={theme.accentSoft}
                 size={260}
-                positionStyle={{top: -90, left: -70}}
+                positionStyle={{ top: -90, left: -70 }}
                 duration={7000}
             />
             <GlowOrb
                 color={theme.accent}
                 size={220}
-                positionStyle={{bottom: -70, right: -80}}
+                positionStyle={{ bottom: -70, right: -80 }}
                 duration={9000}
                 delay={1500}
             />
@@ -184,7 +186,7 @@ function CarBackground({theme}: { theme: any }) {
     );
 }
 
-function LoyaltySpeedometer({points, maxPoints, totalPoints, tierLabel, theme, levelColor}: {
+function LoyaltySpeedometer({ points, maxPoints, totalPoints, tierLabel, theme, levelColor }: {
     points: number;
     maxPoints: number;
     totalPoints: number;
@@ -217,29 +219,29 @@ function LoyaltySpeedometer({points, maxPoints, totalPoints, tierLabel, theme, l
                 duration: 1400,
                 easing: Easing.out(Easing.cubic),
             });
-        }, [targetPercentage])
+        }, [targetPercentage, progress])
     );
 
     const animatedProps = useAnimatedProps(() => {
         const strokeDashoffset = arcLength - (arcLength * progress.value);
-        return {strokeDashoffset};
+        return { strokeDashoffset };
     });
 
     const needleStyle = useAnimatedStyle(() => {
         const rotation = interpolate(progress.value, [0, 1], [-120, 120]);
         return {
-            transform: [{rotate: `${rotation}deg`}],
+            transform: [{ rotate: `${rotation}deg` }],
         };
     });
 
     return (
         <View style={styles.speedoContainer}>
-            <View style={[styles.speedoInstrument, {width: svgWidth, height: svgHeight}]}>
+            <View style={[styles.speedoInstrument, { width: svgWidth, height: svgHeight }]}>
                 <Svg width={svgWidth} height={svgHeight}>
                     <Defs>
                         <SvgGradient id="speedoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <Stop offset="0%" stopColor={theme.accentSoft || '#ff0000'}/>
-                            <Stop offset="100%" stopColor={theme.accent || '#ff0000'}/>
+                            <Stop offset="0%" stopColor={theme.accentSoft || '#ff0000'} />
+                            <Stop offset="100%" stopColor={theme.accent || '#ff0000'} />
                         </SvgGradient>
                     </Defs>
 
@@ -313,12 +315,12 @@ function LoyaltySpeedometer({points, maxPoints, totalPoints, tierLabel, theme, l
                         },
                     ]}
                 >
-                    <View style={[styles.tierDot, {backgroundColor: levelColor || theme.accent || '#ff0000'}]}/>
-                    <Text style={[styles.tierLabelText, {color: theme.textPrimary}]}>{tierLabel.toUpperCase()}</Text>
+                    <View style={[styles.tierDot, { backgroundColor: levelColor || theme.accent || '#ff0000' }]} />
+                    <Text style={[styles.tierLabelText, { color: theme.textPrimary }]}>{tierLabel.toUpperCase()}</Text>
                 </View>
 
-                <View style={[styles.speedoTextOverlay, {top: centerY + 56 * scale}]}>
-                    <Text style={[styles.speedoPoints, {color: theme.textPrimary}]}>{totalPoints.toLocaleString()}</Text>
+                <View style={[styles.speedoTextOverlay, { top: centerY + 56 * scale }]}>
+                    <Text style={[styles.speedoPoints, { color: theme.textPrimary }]}>{totalPoints.toLocaleString()}</Text>
                 </View>
             </View>
         </View>
@@ -328,7 +330,7 @@ function LoyaltySpeedometer({points, maxPoints, totalPoints, tierLabel, theme, l
 const bgStyles = StyleSheet.create({
     glowOrb: {
         position: 'absolute',
-        shadowOffset: {width: 0, height: 0},
+        shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.9,
     },
 });
@@ -336,8 +338,10 @@ const bgStyles = StyleSheet.create({
 export default function LoyaltyScreen() {
     const theme = useTheme();
     const router = useRouter();
-    const {t} = useTranslation();
-    const {user, progress, isLoading, fetch} = useLoyaltyStore();
+    const sessions = useRepairsStore((s) => s.sessions);
+
+    const { t } = useTranslation();
+    const { user, progress, isLoading, fetch } = useLoyaltyStore();
 
     const [code, setCode] = useState(generateBonusCode);
     const [secondsLeft, setSecondsLeft] = useState(CODE_LIFETIME);
@@ -350,7 +354,7 @@ export default function LoyaltyScreen() {
 
     useEffect(() => {
         fetch();
-    }, []);
+    }, [fetch]);
 
     useFocusEffect(
         useCallback(() => {
@@ -358,8 +362,13 @@ export default function LoyaltyScreen() {
 
             const maximizeBrightness = async () => {
                 try {
-                    originalBrightness = await Brightness.getBrightnessAsync();
-                    await Brightness.setBrightnessAsync(1.0);
+                    const { status } = await Brightness.requestPermissionsAsync();
+                    if (status === 'granted') {
+                        originalBrightness = await Brightness.getBrightnessAsync();
+                        await Brightness.setBrightnessAsync(1.0);
+                    } else {
+                        console.warn('Brightness permission denied');
+                    }
                 } catch (error) {
                     console.warn('Failed to adjust system window brightness:', error);
                 }
@@ -368,8 +377,7 @@ export default function LoyaltyScreen() {
             maximizeBrightness();
 
             return () => {
-                Brightness.setBrightnessAsync(originalBrightness).catch(() => {
-                });
+                Brightness.setBrightnessAsync(originalBrightness).catch(() => {});
             };
         }, [])
     );
@@ -379,21 +387,21 @@ export default function LoyaltyScreen() {
             speedoOpacity.value = 0;
             speedoTranslateY.value = 18;
 
-            speedoOpacity.value = withTiming(1, {duration: 480, easing: Easing.out(Easing.cubic)});
-            speedoTranslateY.value = withTiming(0, {duration: 480, easing: Easing.out(Easing.cubic)});
-        }, [])
+            speedoOpacity.value = withTiming(1, { duration: 480, easing: Easing.out(Easing.cubic) });
+            speedoTranslateY.value = withTiming(0, { duration: 480, easing: Easing.out(Easing.cubic) });
+        }, [speedoOpacity, speedoTranslateY])
     );
 
     useEffect(() => {
         glow.value = withRepeat(
             withSequence(
-                withTiming(1, {duration: 1400, easing: Easing.inOut(Easing.sin)}),
-                withTiming(0.45, {duration: 1400, easing: Easing.inOut(Easing.sin)}),
+                withTiming(1, { duration: 1400, easing: Easing.inOut(Easing.sin) }),
+                withTiming(0.45, { duration: 1400, easing: Easing.inOut(Easing.sin) }),
             ),
             -1,
             true,
         );
-    }, []);
+    }, [glow]);
 
     const refreshCode = useCallback(() => {
         setCode(generateBonusCode());
@@ -403,7 +411,7 @@ export default function LoyaltyScreen() {
             duration: CODE_LIFETIME * 1000,
             easing: Easing.linear,
         });
-    }, []);
+    }, [ringProgress]);
 
     useEffect(() => {
         if (secondsLeft <= 0) {
@@ -422,95 +430,106 @@ export default function LoyaltyScreen() {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [ringProgress]);
 
     const glowStyle = useAnimatedStyle(() => ({
         opacity: glow.value,
-        transform: [{scale: 0.94 + glow.value * 0.08}],
+        transform: [{ scale: 0.94 + glow.value * 0.08 }],
     }));
 
     const speedoEntranceStyle = useAnimatedStyle(() => ({
         opacity: speedoOpacity.value,
-        transform: [{translateY: speedoTranslateY.value}],
+        transform: [{ translateY: speedoTranslateY.value }],
     }));
 
     if (isLoading || !user || !progress) {
-        return <View style={{flex: 1}}><LoadingOverlay visible/></View>;
+        return <View style={{ flex: 1 }}><LoadingOverlay visible /></View>;
     }
 
-    const {level, currentValueInLevel, maxValueInLevel, amountToNextLevel, isMaxLevel} = progress;
+    const { level, currentValueInLevel, maxValueInLevel } = progress;
     const qrValue = user.qrValue || `GRANDAUTO:BONUS:${user.id}:${code}`;
 
     return (
         <LinearGradient colors={[theme.background, theme.background]} style={styles.screen}>
-            <Stack.Screen options={{headerShown: false, title: ''}}/>
-            <CarBackground theme={theme}/>
+            <Stack.Screen options={{ headerShown: false, title: '', animation: 'none' }} />
+
+            <CarBackground theme={theme} />
+
             <View style={styles.moreButtonContainer}>
                 <Pressable
                     onPress={() => router.push('/loyalty/rules')}
                     hitSlop={16}
-                    style={({pressed}) => [{opacity: pressed ? 0.6 : 1}]}
+                    style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
                 >
-                    <Ionicons name="ellipsis-vertical" size={26} color={theme.textPrimary}/>
+                    <Ionicons name="ellipsis-vertical" size={26} color={theme.textPrimary} />
                 </Pressable>
             </View>
 
-            <View style={styles.qrZone}>
-                <Animated.View
-                    style={[
-                        styles.glowLayer,
-                        {backgroundColor: theme.accentSoft, shadowColor: theme.accent},
-                        glowStyle,
-                    ]}
-                />
+            {/* ScrollView Added Here */}
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={[styles.scrollContent, {paddingBottom: sessions.length ? 160 : 0}]}
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={styles.qrZone}>
+                    <Animated.View
+                        style={[
+                            styles.glowLayer,
+                            { backgroundColor: theme.accentSoft, shadowColor: theme.accent },
+                            glowStyle,
+                        ]}
+                    />
 
-                <View
-                    style={[
-                        styles.card,
-                        {backgroundColor: theme.qrBackground, borderColor: theme.border},
-                    ]}
-                >
-                    <View style={{width: QR_SIZE, height: QR_SIZE}}>
-                        <QRCode
-                            value={qrValue}
-                            size={QR_SIZE}
-                            color={theme.qrForeground || '#000000'}
-                            backgroundColor={theme.qrBackground || '#ffffff'}
-                        />
-                        <ScanLine size={QR_SIZE} color={theme.scanLine}/>
+                    <View
+                        style={[
+                            styles.card,
+                            { backgroundColor: theme.qrBackground, borderColor: theme.border },
+                        ]}
+                    >
+                        <View style={{ width: QR_SIZE, height: QR_SIZE }}>
+                            <QRCode
+                                value={qrValue}
+                                size={QR_SIZE}
+                                color={theme.qrForeground || '#000000'}
+                                backgroundColor={theme.qrBackground || '#ffffff'}
+                            />
+                            <ScanLine size={QR_SIZE} color={theme.scanLine} />
+                        </View>
+
+                        <View style={[styles.corner, styles.cornerTL, { borderColor: theme.accent }]} />
+                        <View style={[styles.corner, styles.cornerTR, { borderColor: theme.accent }]} />
+                        <View style={[styles.corner, styles.cornerBL, { borderColor: theme.accent }]} />
+                        <View style={[styles.corner, styles.cornerBR, { borderColor: theme.accent }]} />
                     </View>
-
-                    <View style={[styles.corner, styles.cornerTL, {borderColor: theme.accent}]}/>
-                    <View style={[styles.corner, styles.cornerTR, {borderColor: theme.accent}]}/>
-                    <View style={[styles.corner, styles.cornerBL, {borderColor: theme.accent}]}/>
-                    <View style={[styles.corner, styles.cornerBR, {borderColor: theme.accent}]}/>
                 </View>
-            </View>
 
-            <View style={styles.manualBlock}>
-                <View style={styles.codeRow}>
-                    <Text style={[styles.codeText, {color: theme.textPrimary}]}>
-                        {formatCode(code)}
-                    </Text>
+                <View style={styles.manualBlock}>
+                    <View style={styles.codeRow}>
+                        <Text style={[styles.codeText, { color: theme.textPrimary }]}>
+                            {formatCode(code)}
+                        </Text>
+                    </View>
                 </View>
-            </View>
-            <Text style={[styles.bonusesTotalPoints, {color: theme.text}]}>
-                {user.currentBonusBalance.toLocaleString()}
-            </Text>
-            <Text style={[styles.bonusesTotal, {color: theme.textSecondary}]}>
-                {t('loyalty.activeBonuses')}
-            </Text>
 
-            <Animated.View style={speedoEntranceStyle}>
-                <LoyaltySpeedometer
-                    points={currentValueInLevel}
-                    maxPoints={maxValueInLevel}
-                    totalPoints={user.totalBonusesEarned}
-                    tierLabel={t(`loyalty.status.${level.id}`)}
-                    theme={theme}
-                    levelColor={level.color}
-                />
-            </Animated.View>
+                <Text style={[styles.bonusesTotalPoints, { color: theme.textPrimary }]}>
+                    {user.currentBonusBalance.toLocaleString()}
+                </Text>
+
+                <Text style={[styles.bonusesTotal, { color: theme.textSecondary }]}>
+                    {t('loyalty.activeBonuses')}
+                </Text>
+
+                <Animated.View style={speedoEntranceStyle}>
+                    <LoyaltySpeedometer
+                        points={currentValueInLevel}
+                        maxPoints={maxValueInLevel}
+                        totalPoints={user.totalBonusesEarned}
+                        tierLabel={t(`loyalty.status.${level.id}`)}
+                        theme={theme}
+                        levelColor={level.color}
+                    />
+                </Animated.View>
+            </ScrollView>
         </LinearGradient>
     );
 }
@@ -518,6 +537,13 @@ export default function LoyaltyScreen() {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
+    },
+    scrollView: {
+        flex: 1,
+        width: '100%',
+    },
+    scrollContent: {
+        flexGrow: 1,
         paddingTop: 70,
         paddingHorizontal: 24,
         alignItems: 'center',
@@ -540,7 +566,7 @@ const styles = StyleSheet.create({
         width: QR_SIZE + CARD_PADDING * 2 + 20,
         height: QR_SIZE + CARD_PADDING * 2 + 20,
         borderRadius: 36,
-        shadowOffset: {width: 0, height: 0},
+        shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.9,
         shadowRadius: 30,
     },
@@ -560,10 +586,10 @@ const styles = StyleSheet.create({
         height: 22,
         borderWidth: 3,
     },
-    cornerTL: {top: 11, left: 11, borderRightWidth: 0, borderBottomWidth: 0, borderTopLeftRadius: 15},
-    cornerTR: {top: 11, right: 11, borderLeftWidth: 0, borderBottomWidth: 0, borderTopRightRadius: 15},
-    cornerBL: {bottom: 11, left: 11, borderRightWidth: 0, borderTopWidth: 0, borderBottomLeftRadius: 15},
-    cornerBR: {bottom: 11, right: 11, borderLeftWidth: 0, borderTopWidth: 0, borderBottomRightRadius: 15},
+    cornerTL: { top: 11, left: 11, borderRightWidth: 0, borderBottomWidth: 0, borderTopLeftRadius: 15 },
+    cornerTR: { top: 11, right: 11, borderLeftWidth: 0, borderBottomWidth: 0, borderTopRightRadius: 15 },
+    cornerBL: { bottom: 11, left: 11, borderRightWidth: 0, borderTopWidth: 0, borderBottomLeftRadius: 15 },
+    cornerBR: { bottom: 11, right: 11, borderLeftWidth: 0, borderTopWidth: 0, borderBottomRightRadius: 15 },
     manualBlock: {
         marginTop: 20,
         width: '100%',

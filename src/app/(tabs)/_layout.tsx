@@ -5,6 +5,7 @@ import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
 import AuthScreen from '@/components/auth-screen';
 import { useAuthStore } from '@/store/auth.store';
+import {RepairMiniPlayerRoot} from "@/components/repair-mini-player/repair-mini-player-root";
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
@@ -13,6 +14,7 @@ export default function TabLayout() {
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <AppTabs />
+            <RepairMiniPlayerRoot />
             <AnimatedSplashOverlay />
 
             {!user && (

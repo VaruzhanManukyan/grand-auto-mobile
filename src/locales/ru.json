@@ -87,5 +87,17 @@
         "step3Desc": "Чем больше общая сумма ваших покупок, тем выше ваш уровень лояльности и процент кэшбэка."
       }
     }
+  },
+  "repairs": {
+    "headerTitle": "Авто на обслуживании",
+    "mechanicLabel": "механик {{name}}",
+    "miniPlayerEta": "{{count}} мин",
+    "etaLeft": "Осталось ~{{count}} мин",
+    "stages": {
+      "accepted": "Принято",
+      "diagnostics": "Диагностика",
+      "inProgress": "Ремонт",
+      "done": "Готово"
+    }
   }
 }

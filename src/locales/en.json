@@ -86,6 +86,17 @@
         "step3Desc": "The more you spend in total, the higher your loyalty level and cashback percentage."
       }
     }
-
+  },
+  "repairs": {
+    "headerTitle": "Car under service",
+    "mechanicLabel": "mechanic {{name}}",
+    "miniPlayerEta": "{{count}} min",
+    "etaLeft": "Remaining ~{{count}} min",
+    "stages": {
+      "accepted": "Accepted",
+      "diagnostics": "Diagnostics",
+      "inProgress": "In Progress",
+      "done": "Done"
+    }
   }
 }

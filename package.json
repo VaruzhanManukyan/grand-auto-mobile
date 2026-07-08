@@ -5,9 +5,11 @@
   "dependencies": {
     "@expo/ui": "~56.0.20",
     "@expo/vector-icons": "^15.1.1",
+    "@gorhom/bottom-sheet": "^5.2.14",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/native": "^7.3.4",
     "expo": "~56.0.14",
+    "expo-blur": "~56.0.3",
     "expo-brightness": "~56.0.5",
     "expo-clipboard": "~56.0.4",
     "expo-constants": "~56.0.20",
