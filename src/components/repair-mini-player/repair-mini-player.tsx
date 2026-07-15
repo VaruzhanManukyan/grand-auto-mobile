@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo, useRef, useCallback } from 'react';
+import React, {useEffect, useMemo, useRef, useCallback} from 'react';
 import {
     View,
     Text,
     StyleSheet,
-    useColorScheme,
     Dimensions,
     StyleProp,
     ViewStyle,
@@ -16,18 +15,19 @@ import Animated, {
     runOnJS,
     interpolate,
     Extrapolation,
-    withSpring,
+    withSpring, SharedValue,
 } from 'react-native-reanimated';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { useTranslation } from 'react-i18next';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import {useTranslation} from 'react-i18next';
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
 
-import { useLanguage } from "@/hooks/use-language";
-import { Colors } from '@/constants/theme';
-import { useRepairsStore } from '@/store/repairs.store';
-import { CircularProgress } from './circular-progress';
-import { AdaptiveGlass } from '@/components/ui/adaptive-glass';
-import { RepairDetailsSheet } from './repair-details-sheet';
+import {useLanguage} from "@/hooks/use-language";
+import {useRepairsStore} from '@/store/repairs.store';
+import {CircularProgress} from './circular-progress';
+import {AdaptiveGlass} from '@/components/ui/adaptive-glass';
+import {RepairDetailsSheet} from './repair-details-sheet';
+import {useTheme} from "@/hooks/use-theme";
+import {useColorScheme} from "@/hooks/use-color-scheme";
 
 const SPRING_CONFIG = {
     damping: 18,
@@ -46,43 +46,47 @@ const ITEM_EXTENT = ITEM_WIDTH + GAP;
 type RepairCardProps = {
     session: any;
     index: number;
-    translateX: Animated.SharedValue<number>;
-    colors: typeof Colors['light' | 'dark'];
-    scheme: 'light' | 'dark';
+    translateX: SharedValue<number>;
     onExpand: () => void;
 };
 
-const RepairCard = React.memo(function RepairCard({ session, index, translateX, colors, scheme, onExpand }: RepairCardProps) {
-    const { t } = useTranslation();
-    const { currentLanguage } = useLanguage();
+const RepairCard = React.memo(function RepairCard({session, index, translateX, onExpand}: RepairCardProps) {
+    const {t} = useTranslation();
+    const theme = useTheme();
+    const scheme = useColorScheme();
+    const {currentLanguage} = useLanguage();
 
     const cardStyle = useAnimatedStyle(() => {
         const pos = index * ITEM_EXTENT + translateX.value - PEEK;
         const distance = Math.abs(pos) / ITEM_EXTENT;
         const opacity = interpolate(distance, [0, 0.5, 1], [1, 1, 0.5], Extrapolation.CLAMP);
         const scale = interpolate(distance, [0, 0.5, 1], [1, 1, 0.94], Extrapolation.CLAMP);
-        return { opacity, transform: [{ scale }] };
+        return {opacity, transform: [{scale}]};
     });
 
     return (
-        <Animated.View style={[{ width: ITEM_WIDTH, overflow: 'hidden', borderRadius: 50,  }, cardStyle]}>
+        <Animated.View style={[{width: ITEM_WIDTH, overflow: 'hidden', borderRadius: 50,}, cardStyle]}>
             <Pressable onPress={onExpand}>
                 <AdaptiveGlass
                     style={[
                         styles.card,
-                        { borderColor: colors.border },
-                        Platform.OS === 'ios' && { shadowOpacity: -500 } // Completely removes iOS shadows
+                        {borderColor: theme.border},
+                        Platform.OS === 'ios' && {shadowOpacity: -500} // Completely removes iOS shadows
                     ]}
                     colorScheme={scheme}
-                    solidColor={colors.backgroundBar}
+                    solidColor={theme.backgroundBar}
                 >
-                    <CircularProgress progress={session.progress} trackColor={colors.border} progressColor={colors.accent} />
+                    <CircularProgress progress={session.progress} trackColor={theme.border}
+                                      progressColor={theme.accent}/>
                     <View style={styles.textBlock}>
-                        <Text numberOfLines={1} style={[styles.title, { color: colors.textPrimary }]}>
+                        <Text numberOfLines={1} style={[styles.title, {color: theme.textPrimary}]}>
                             {session.carLabel}
                         </Text>
-                        <Text numberOfLines={1} style={[styles.subtitle, { color: colors.textSecondary }]}>
-                            {session.serviceLabel} · {t('repairs.miniPlayerEta', { count: session.etaMinutes, lng: currentLanguage })}
+                        <Text numberOfLines={1} style={[styles.subtitle, {color: theme.textSecondary}]}>
+                            {session.serviceLabel} · {t('repairs.miniPlayerEta', {
+                            count: session.etaMinutes,
+                            lng: currentLanguage
+                        })}
                         </Text>
                     </View>
                 </AdaptiveGlass>
@@ -96,9 +100,7 @@ type Props = {
     style?: StyleProp<ViewStyle>;
 };
 
-function RepairMiniPlayerInner({ isMoreTab, style }: Props) {
-    const scheme = useColorScheme() ?? 'light';
-    const colors = Colors[scheme];
+function RepairMiniPlayerInner({isMoreTab, style}: Props) {
     const sessions = useRepairsStore((s) => s.sessions);
     const currentIndex = useRepairsStore((s) => s.currentIndex);
     const setCurrentIndex = useRepairsStore((s) => s.setCurrentIndex);
@@ -173,16 +175,16 @@ function RepairMiniPlayerInner({ isMoreTab, style }: Props) {
     );
 
     const rowStyle = useAnimatedStyle(() => ({
-        transform: [{ translateX: translateX.value }],
+        transform: [{translateX: translateX.value}],
     }));
 
     if (!sessions.length) return null;
 
     return (
         <>
-            <RepairDetailsSheet ref={sheetRef} onDismiss={handleDismiss} />
+            <RepairDetailsSheet ref={sheetRef} onDismiss={handleDismiss}/>
             <GestureDetector gesture={panGesture}>
-                <View style={[{ width: CONTAINER_WIDTH }, style]}>
+                <View style={[{width: CONTAINER_WIDTH}, style]}>
                     <View style={styles.viewport}>
                         <Animated.View style={[styles.row, rowStyle]}>
                             {sessions.map((session, i) => (
@@ -191,8 +193,6 @@ function RepairMiniPlayerInner({ isMoreTab, style }: Props) {
                                     session={session}
                                     index={i}
                                     translateX={translateX}
-                                    colors={colors}
-                                    scheme={scheme}
                                     onExpand={handleExpand}
                                 />
                             ))}
@@ -207,8 +207,8 @@ function RepairMiniPlayerInner({ isMoreTab, style }: Props) {
 export const RepairMiniPlayer = React.memo(RepairMiniPlayerInner);
 
 const styles = StyleSheet.create({
-    viewport: { overflow: 'hidden', width: '100%' },
-    row: { flexDirection: 'row', gap: GAP },
+    viewport: {overflow: 'hidden', width: '100%'},
+    row: {flexDirection: 'row', gap: GAP},
     card: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 12,
     },
-    textBlock: { flex: 1, minWidth: 0 },
-    title: { fontSize: 13, fontWeight: '500' },
-    subtitle: { fontSize: 12, marginTop: 2 },
+    textBlock: {flex: 1, minWidth: 0},
+    title: {fontSize: 13, fontWeight: '500'},
+    subtitle: {fontSize: 12, marginTop: 2},
 });

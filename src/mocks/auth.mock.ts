@@ -3,7 +3,7 @@
  *
  * All mock-specific logic: OTP store, fake token generation, social test users.
  * When you switch to a real backend → DELETE this entire file.
- * Nothing outside auth.service.ts imports from here.
+ * Nothing outside auth.service.types.ts imports from here.
  */
 
 import { AuthTokens } from '@/types/auth.types';

@@ -54,3 +54,5 @@ coverage/
 
 # build artifacts
 build/
+
+.env

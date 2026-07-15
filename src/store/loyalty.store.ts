@@ -5,7 +5,6 @@
  * mocks directly. Same shape as store/auth.store.ts, so this file
  * doesn't change when you switch to a real backend either.
  */
-
 import { create } from 'zustand';
 import { loyaltyService } from '@/services/loyalty.service';
 import { resolveLoyaltyLevel } from '@/utils/loyalty.levels';
@@ -17,18 +16,15 @@ type State = {
     isLoading: boolean;
     error: string | null;
 };
-
 type Actions = {
     fetch(): Promise<void>;
     refresh(): Promise<void>;
 };
-
 export const useLoyaltyStore = create<State & Actions>((set) => ({
     user: null,
     progress: null,
     isLoading: false,
     error: null,
-
     fetch: async () => {
         set({ isLoading: true, error: null });
         try {
@@ -38,9 +34,6 @@ export const useLoyaltyStore = create<State & Actions>((set) => ({
             set({ error: e.message, isLoading: false });
         }
     },
-
-    // Same as fetch(), but skips the loading flag — use after an action
-    // that changes totalSpentAmount (e.g. a purchase) without a full-screen spinner.
     refresh: async () => {
         try {
             const user = await loyaltyService.getCurrentUser();

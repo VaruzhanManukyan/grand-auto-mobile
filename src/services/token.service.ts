@@ -1,5 +1,5 @@
 /**
- * services/token.service.ts
+ * services/token.service.types.ts
  *
  * Stores access + refresh tokens in the device's secure keychain.
  * Handles automatic refresh when the access token is close to expiry.

@@ -1,180 +1,156 @@
-import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import { ExternalLink } from '@/components/external-link';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+    useServicesStore,
+    useSelectedCenter,
+    useFilteredCenters,
+    useCityList,
+} from '@/store/services.store';
 import { useTheme } from '@/hooks/use-theme';
+import { useRepairsStore } from '@/store/repairs.store';
 
-export default function TabTwoScreen() {
-  const safeAreaInsets = useSafeAreaInsets();
-  const insets = {
-    ...safeAreaInsets,
-    bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
-  };
-  const theme = useTheme();
+// Components
+import { ServiceMap } from '@/components/services/service-map';
+import { ServiceMiniCard } from '@/components/services/service-mini-card';
+import { ServiceList } from '@/components/services/service-list';
+import { CityPickerButton } from '@/components/services/city-picker-button';
+import { CityPickerSheet } from '@/components/services/city-picker-sheet';
+import { NavigatePickerSheet } from '@/components/services/navigate-picker-sheet';
 
-  const contentPlatformStyle = Platform.select({
-    android: {
-      paddingTop: insets.top,
-      paddingLeft: insets.left,
-      paddingRight: insets.right,
-      paddingBottom: insets.bottom,
-    },
-    web: {
-      paddingTop: Spacing.six,
-      paddingBottom: Spacing.four,
-    },
-  });
+// Utils
+import { getAvailableNavigationApps, openWithApp, NavigationApp } from '@/utils/navigation-apps';
+import { ServiceCenter } from '@/types/service.types';
 
-  return (
-    <ScrollView
-      style={[styles.scrollView, { backgroundColor: theme.background }]}
-      contentInset={insets}
-      contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
-      <ThemedView style={styles.container}>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="subtitle">Anna</ThemedText>
-          <ThemedText style={styles.centerText} themeColor="textSecondary">
-            This starter app includes example{'\n'}code to help you get started.
-          </ThemedText>
+export default function ServicesScreen() {
+    const router = useRouter();
+    const theme = useTheme();
+    const insets = useSafeAreaInsets();
 
-          <ExternalLink href="https://docs.expo.dev" asChild>
-            <Pressable style={({ pressed }) => pressed && styles.pressed}>
-              <ThemedView type="backgroundElement" style={styles.linkButton}>
-                <ThemedText type="link">Expo documentation</ThemedText>
-                <SymbolView
-                  tintColor={theme.text}
-                  name={{ ios: 'arrow.up.right.square', android: 'link', web: 'link' }}
-                  size={12}
-                />
-              </ThemedView>
-            </Pressable>
-          </ExternalLink>
-        </ThemedView>
+    const { isLoading, fetch, selectCenter, selectedCenterId, selectedCity, selectCity } = useServicesStore();
+    const filteredCenters = useFilteredCenters();
+    const cities = useCityList();
+    const selectedCenter = useSelectedCenter();
+    const sessions = useRepairsStore((s) => s.sessions);
 
-        <ThemedView style={styles.sectionsWrapper}>
-          <Collapsible title="File-based routing">
-            <ThemedText type="small">
-              This app has two screens: <ThemedText type="code">src/app/index.tsx</ThemedText> and{' '}
-              <ThemedText type="code">src/app/explore.tsx</ThemedText>
-            </ThemedText>
-            <ThemedText type="small">
-              The layout file in <ThemedText type="code">src/app/_layout.tsx</ThemedText> sets up
-              the tab navigator.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/router/introduction">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+    // UI States
+    const [isCityPickerOpen, setIsCityPickerOpen] = useState(false);
 
-          <Collapsible title="Android, iOS, and web support">
-            <ThemedView type="backgroundElement" style={styles.collapsibleContent}>
-              <ThemedText type="small">
-                You can open this project on Android, iOS, and the web. To open the web version,
-                press <ThemedText type="smallBold">w</ThemedText> in the terminal running this
-                project.
-              </ThemedText>
-              <Image
-                source={require('@/assets/images/tutorial-web.png')}
-                style={styles.imageTutorial}
-              />
-            </ThemedView>
-          </Collapsible>
+    // Navigation States
+    const [isNavPickerOpen, setIsNavPickerOpen] = useState(false);
+    const [navApps, setNavApps] = useState<NavigationApp[]>([]);
+    const [centerToNavigate, setCenterToNavigate] = useState<ServiceCenter | null>(null);
 
-          <Collapsible title="Images">
-            <ThemedText type="small">
-              For static images, you can use the <ThemedText type="code">@2x</ThemedText> and{' '}
-              <ThemedText type="code">@3x</ThemedText> suffixes to provide files for different
-              screen densities.
-            </ThemedText>
-            <Image source={require('@/assets/images/react-logo.png')} style={styles.imageReact} />
-            <ExternalLink href="https://reactnative.dev/docs/images">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+    useEffect(() => {
+        fetch();
+    }, []);
 
-          <Collapsible title="Light and dark mode components">
-            <ThemedText type="small">
-              This template has light and dark mode support. The{' '}
-              <ThemedText type="code">useColorScheme()</ThemedText> hook lets you inspect what the
-              user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+    // 1. Triggers the smart navigation flow
+    const handleRoutePress = async (center: ServiceCenter) => {
+        const apps = await getAvailableNavigationApps();
+        if (apps.length === 1) {
+            // If they only have one maps app (or just the browser fallback), skip the menu and open it immediately
+            openWithApp(apps[0], center);
+        } else {
+            // Otherwise, store the available apps and open the selection sheet
+            setNavApps(apps);
+            setCenterToNavigate(center);
+            setIsNavPickerOpen(true);
+        }
+    };
 
-          <Collapsible title="Animations">
-            <ThemedText type="small">
-              This template includes an example of an animated component. The{' '}
-              <ThemedText type="code">src/components/ui/collapsible.tsx</ThemedText> component uses
-              the powerful <ThemedText type="code">react-native-reanimated</ThemedText> library to
-              animate opening this hint.
-            </ThemedText>
-          </Collapsible>
-        </ThemedView>
-        {Platform.OS === 'web' && <WebBadge />}
-      </ThemedView>
-    </ScrollView>
-  );
+    if (isLoading && filteredCenters.length === 0) {
+        return (
+            <View style={[styles.centered, { backgroundColor: theme.background }]}>
+                <ActivityIndicator size="large" color={theme.accent} />
+            </View>
+        );
+    }
+
+    return (
+        <View style={styles.container}>
+            {/* Layer 1: The Canvas */}
+            <ServiceMap
+                centers={filteredCenters}
+                selectedCenterId={selectedCenterId}
+                onMarkerPress={(center) => selectCenter(center.id)}
+                onMapPress={() => selectCenter(null)}
+            />
+
+            {/* Layer 2: Floating City Button */}
+            <SafeAreaView style={styles.topOverlay} edges={['top']} pointerEvents="box-none">
+                <View style={styles.headerRow}>
+                    <CityPickerButton
+                        selectedCity={selectedCity}
+                        isOpen={isCityPickerOpen}
+                        onPress={() => setIsCityPickerOpen(true)}
+                    />
+                </View>
+            </SafeAreaView>
+
+            {/* Layer 3: Bottom Deck */}
+            <View style={[styles.bottomDeck, { bottom: insets.bottom + (sessions.length === 0 ? 10 : 70) }]}>
+                {selectedCenter ? (
+                    <ServiceMiniCard
+                        center={selectedCenter}
+                        onPress={() => router.push(`/services/${selectedCenter.id}`)}
+                        onRoutePress={() => handleRoutePress(selectedCenter)} // <-- Pass the routing handler down!
+                        onClose={() => selectCenter(null)}
+                    />
+                ) : (
+                    <ServiceList
+                        centers={filteredCenters}
+                        onSelect={selectCenter}
+                        isVisible={selectedCenterId === null}
+                    />
+                )}
+            </View>
+
+            {/* Modals: They only render fully when visible */}
+            <CityPickerSheet
+                visible={isCityPickerOpen}
+                cities={cities}
+                selectedCity={selectedCity}
+                onSelect={(city) => {
+                    selectCity(city);
+                    setIsCityPickerOpen(false);
+                }}
+                onClose={() => setIsCityPickerOpen(false)}
+            />
+
+            <NavigatePickerSheet
+                visible={isNavPickerOpen}
+                apps={navApps}
+                onSelect={(app) => {
+                    setIsNavPickerOpen(false);
+                    if (centerToNavigate) openWithApp(app, centerToNavigate);
+                }}
+                onClose={() => setIsNavPickerOpen(false)}
+            />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  container: {
-    maxWidth: MaxContentWidth,
-    flexGrow: 1,
-  },
-  titleContainer: {
-    gap: Spacing.three,
-    alignItems: 'center',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.six,
-  },
-  centerText: {
-    textAlign: 'center',
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  linkButton: {
-    flexDirection: 'row',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-    borderRadius: Spacing.five,
-    justifyContent: 'center',
-    gap: Spacing.one,
-    alignItems: 'center',
-  },
-  sectionsWrapper: {
-    gap: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.three,
-  },
-  collapsibleContent: {
-    alignItems: 'center',
-  },
-  imageTutorial: {
-    width: '100%',
-    aspectRatio: 296 / 171,
-    borderRadius: Spacing.three,
-    marginTop: Spacing.two,
-  },
-  imageReact: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
-  },
+    container: { flex: 1 },
+    centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    topOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 10,
+    },
+    headerRow: {
+        flexDirection: 'row',
+        paddingHorizontal: 16,
+        paddingTop: 8,
+    },
+    bottomDeck: {
+        position: 'absolute',
+        width: '90%',
+        alignSelf: 'center',
+        zIndex: 10,
+    },
 });

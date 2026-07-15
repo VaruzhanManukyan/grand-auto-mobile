@@ -7,14 +7,14 @@ import { BlurView } from 'expo-blur';
 import { GlassView, isGlassEffectAPIAvailable } from 'expo-glass-effect';
 
 type Props = ViewProps & {
-    colorScheme: 'light' | 'dark';
+    colorScheme: 'light' | 'dark' | 'unspecified';
     solidColor: string; // opaque fallback for Android and pre-26 iOS
 };
 
 export function AdaptiveGlass({ style, colorScheme, solidColor, children, ...rest }: Props) {
     if (Platform.OS === 'ios' && isGlassEffectAPIAvailable()) {
         return (
-            <GlassView style={style} glassEffectStyle="regular" colorScheme={colorScheme} {...rest}>
+            <GlassView style={style} glassEffectStyle="regular" colorScheme={colorScheme === "unspecified" ? "dark" : colorScheme} {...rest}>
                 {children}
             </GlassView>
         );
