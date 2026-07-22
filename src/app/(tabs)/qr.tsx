@@ -362,21 +362,21 @@ export default function LoyaltyScreen() {
 
             const maximizeBrightness = async () => {
                 try {
-                    const { status } = await Brightness.requestPermissionsAsync();
-                    if (status === 'granted') {
-                        originalBrightness = await Brightness.getBrightnessAsync();
-                        await Brightness.setBrightnessAsync(1.0);
-                    } else {
-                        console.warn('Brightness permission denied');
-                    }
+                    // Get the current window brightness so we can restore it on unmount
+                    originalBrightness = await Brightness.getBrightnessAsync();
+
+                    // Set the app window brightness to 100% (1.0)
+                    // This does NOT require user permissions and won't trigger the system settings screen
+                    await Brightness.setBrightnessAsync(1.0);
                 } catch (error) {
-                    console.warn('Failed to adjust system window brightness:', error);
+                    console.warn('Failed to adjust window brightness:', error);
                 }
             };
 
             maximizeBrightness();
 
             return () => {
+                // Restore the original brightness when the user leaves the screen
                 Brightness.setBrightnessAsync(originalBrightness).catch(() => {});
             };
         }, [])

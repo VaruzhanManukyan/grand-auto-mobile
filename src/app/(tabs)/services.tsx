@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
     useServicesStore,
     useSelectedCenter,
@@ -9,35 +8,39 @@ import {
     useCityList,
 } from '@/store/services.store';
 import { useTheme } from '@/hooks/use-theme';
-import { useRepairsStore } from '@/store/repairs.store';
+import { TAB_BAR_CLEARANCE } from '@/constants/layout';
 
-// Components
 import { ServiceMap } from '@/components/services/service-map';
 import { ServiceMiniCard } from '@/components/services/service-mini-card';
 import { ServiceList } from '@/components/services/service-list';
-import { CityPickerButton } from '@/components/services/city-picker-button';
 import { CityPickerSheet } from '@/components/services/city-picker-sheet';
+import { ServiceFilterSheet } from '@/components/services/service-filter-sheet';
 import { NavigatePickerSheet } from '@/components/services/navigate-picker-sheet';
 
-// Utils
 import { getAvailableNavigationApps, openWithApp, NavigationApp } from '@/utils/navigation-apps';
 import { ServiceCenter } from '@/types/service.types';
 
 export default function ServicesScreen() {
     const router = useRouter();
     const theme = useTheme();
-    const insets = useSafeAreaInsets();
 
-    const { isLoading, fetch, selectCenter, selectedCenterId, selectedCity, selectCity } = useServicesStore();
+    const {
+        isLoading,
+        fetch,
+        selectCenter,
+        selectedCenterId,
+        selectedCity,
+        selectCity,
+        selectedServices,
+        toggleService,
+        resetServices,
+    } = useServicesStore();
     const filteredCenters = useFilteredCenters();
     const cities = useCityList();
     const selectedCenter = useSelectedCenter();
-    const sessions = useRepairsStore((s) => s.sessions);
 
-    // UI States
     const [isCityPickerOpen, setIsCityPickerOpen] = useState(false);
-
-    // Navigation States
+    const [isServiceFilterOpen, setIsServiceFilterOpen] = useState(false);
     const [isNavPickerOpen, setIsNavPickerOpen] = useState(false);
     const [navApps, setNavApps] = useState<NavigationApp[]>([]);
     const [centerToNavigate, setCenterToNavigate] = useState<ServiceCenter | null>(null);
@@ -46,14 +49,11 @@ export default function ServicesScreen() {
         fetch();
     }, []);
 
-    // 1. Triggers the smart navigation flow
     const handleRoutePress = async (center: ServiceCenter) => {
         const apps = await getAvailableNavigationApps();
         if (apps.length === 1) {
-            // If they only have one maps app (or just the browser fallback), skip the menu and open it immediately
             openWithApp(apps[0], center);
         } else {
-            // Otherwise, store the available apps and open the selection sheet
             setNavApps(apps);
             setCenterToNavigate(center);
             setIsNavPickerOpen(true);
@@ -70,7 +70,7 @@ export default function ServicesScreen() {
 
     return (
         <View style={styles.container}>
-            {/* Layer 1: The Canvas */}
+            {/* Map component handles panning & marker presses */}
             <ServiceMap
                 centers={filteredCenters}
                 selectedCenterId={selectedCenterId}
@@ -78,36 +78,35 @@ export default function ServicesScreen() {
                 onMapPress={() => selectCenter(null)}
             />
 
-            {/* Layer 2: Floating City Button */}
-            <SafeAreaView style={styles.topOverlay} edges={['top']} pointerEvents="box-none">
-                <View style={styles.headerRow}>
-                    <CityPickerButton
-                        selectedCity={selectedCity}
-                        isOpen={isCityPickerOpen}
-                        onPress={() => setIsCityPickerOpen(true)}
-                    />
-                </View>
-            </SafeAreaView>
-
-            {/* Layer 3: Bottom Deck */}
-            <View style={[styles.bottomDeck, { bottom: insets.bottom + (sessions.length === 0 ? 10 : 70) }]}>
-                {selectedCenter ? (
+            {/* Overlays */}
+            {selectedCenter ? (
+                <View
+                    style={[styles.miniCardDeck, { bottom: TAB_BAR_CLEARANCE }]}
+                    pointerEvents="box-none"
+                >
                     <ServiceMiniCard
+                        visible={!!selectedCenter}
                         center={selectedCenter}
                         onPress={() => router.push(`/services/${selectedCenter.id}`)}
-                        onRoutePress={() => handleRoutePress(selectedCenter)} // <-- Pass the routing handler down!
+                        onRoutePress={() => handleRoutePress(selectedCenter)}
                         onClose={() => selectCenter(null)}
                     />
-                ) : (
-                    <ServiceList
-                        centers={filteredCenters}
-                        onSelect={selectCenter}
-                        isVisible={selectedCenterId === null}
-                    />
-                )}
-            </View>
+                </View>
+            ) : (
+                <ServiceList
+                    centers={filteredCenters}
+                    onSelect={selectCenter}
+                    isVisible={selectedCenterId === null && !isCityPickerOpen && !isServiceFilterOpen}
+                    selectedCity={selectedCity}
+                    isCityPickerOpen={isCityPickerOpen}
+                    setIsCityPickerOpen={setIsCityPickerOpen}
+                    selectedServicesCount={selectedServices.length}
+                    isServiceFilterOpen={isServiceFilterOpen}
+                    setIsServiceFilterOpen={setIsServiceFilterOpen}
+                />
+            )}
 
-            {/* Modals: They only render fully when visible */}
+            {/* Bottom Sheets */}
             <CityPickerSheet
                 visible={isCityPickerOpen}
                 cities={cities}
@@ -117,6 +116,14 @@ export default function ServicesScreen() {
                     setIsCityPickerOpen(false);
                 }}
                 onClose={() => setIsCityPickerOpen(false)}
+            />
+
+            <ServiceFilterSheet
+                visible={isServiceFilterOpen}
+                selected={selectedServices}
+                onToggle={toggleService}
+                onReset={resetServices}
+                onClose={() => setIsServiceFilterOpen(false)}
             />
 
             <NavigatePickerSheet
@@ -135,19 +142,7 @@ export default function ServicesScreen() {
 const styles = StyleSheet.create({
     container: { flex: 1 },
     centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    topOverlay: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 10,
-    },
-    headerRow: {
-        flexDirection: 'row',
-        paddingHorizontal: 16,
-        paddingTop: 8,
-    },
-    bottomDeck: {
+    miniCardDeck: {
         position: 'absolute',
         width: '90%',
         alignSelf: 'center',

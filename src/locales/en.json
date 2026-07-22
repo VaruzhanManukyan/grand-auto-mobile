@@ -98,5 +98,64 @@
       "inProgress": "In Progress",
       "done": "Done"
     }
+  },
+  "services": {
+    "common": {
+      "search": "Search",
+      "cancel": "Cancel",
+      "done": "Done",
+      "reset": "Reset",
+      "back": "Back"
+    },
+    "cityPicker": {
+      "title": "Choose a city",
+      "searchPlaceholder": "Search city",
+      "allCities": "All cities",
+      "notFound": "City not found"
+    },
+    "filter": {
+      "title": "Services",
+      "buttonLabel": "Services",
+      "buttonLabelWithCount": "Services ({{count}})"
+    },
+    "navigatePicker": {
+      "title": "Open route in…"
+    },
+    "list": {
+      "headerTitle": "Service centers",
+      "searchPlaceholder": "Search service",
+      "empty": "Nothing found"
+    },
+    "detail": {
+      "servicesEmpty": "List of services is temporarily unavailable",
+      "notFound": "Service center not found",
+      "services": "Services",
+      "rateService": "Rate service",
+      "onMap": "On map",
+      "call": "Call",
+      "route": "Directions"
+    },
+    "rating": {
+      "prompt": "Rate your visit experience",
+      "yourRating": "Your rating: {{rating}} out of 5",
+      "thankYou": "Thank you for your feedback!"
+    },
+    "serviceTypes": {
+      "washing": "Washing",
+      "diagnostics": "Diagnostics",
+      "oilChange": "Oil change",
+      "engineRepair": "Engine repair",
+      "tireService": "Tire service",
+      "bodyRepair": "Body repair"
+    },
+    "navApps": {
+      "apple": "Apple Maps",
+      "google": "Google Maps",
+      "waze": "Waze",
+      "yandex": "Yandex Navigator",
+      "yandex_maps": "Yandex Maps",
+      "dgis": "2GIS",
+      "web": "Google Maps (Browser)"
+    }
   }
 }

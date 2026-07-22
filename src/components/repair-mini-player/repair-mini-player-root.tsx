@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import {Dimensions, Platform, StyleSheet} from 'react-native';
+import { Dimensions, Platform, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSegments } from 'expo-router';
 import { useRepairsStore } from '@/store/repairs.store';
@@ -10,7 +10,12 @@ const OFFSCREEN_X = -(SCREEN_WIDTH + 50);
 
 export function RepairMiniPlayerRoot() {
     const segments = useSegments();
+
+    // Smoothly hide player if navigating to 'more' tab OR the 'services' screen
     const isMoreTab = segments.includes('more');
+    const isServicesTab = segments.includes('services');
+    const shouldHide = isMoreTab || isServicesTab;
+
     const fetch = useRepairsStore((s) => s.fetch);
     const sessions = useRepairsStore((s) => s.sessions);
     const hasSessions = sessions.length > 0;
@@ -23,8 +28,8 @@ export function RepairMiniPlayerRoot() {
 
     useEffect(() => {
         if (!hasSessions) return;
-        translateX.value = withTiming(isMoreTab ? OFFSCREEN_X : 0, { duration: 250 });
-    }, [isMoreTab, hasSessions]);
+        translateX.value = withTiming(shouldHide ? OFFSCREEN_X : 0, { duration: 250 });
+    }, [shouldHide, hasSessions]);
 
     const containerStyle = useAnimatedStyle(() => ({
         transform: [{ translateX: translateX.value }],
@@ -34,7 +39,7 @@ export function RepairMiniPlayerRoot() {
 
     return (
         <Animated.View
-            pointerEvents={isMoreTab ? 'none' : 'auto'}
+            pointerEvents={shouldHide ? 'none' : 'auto'}
             style={[
                 styles.wrapper,
                 { bottom: Platform.OS === 'ios' ? 90 : 110 },

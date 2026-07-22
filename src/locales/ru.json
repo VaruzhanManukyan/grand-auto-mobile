@@ -99,5 +99,64 @@
       "inProgress": "Ремонт",
       "done": "Готово"
     }
+  },
+  "services": {
+    "common": {
+      "search": "Поиск",
+      "cancel": "Отмена",
+      "done": "Готово",
+      "reset": "Сбросить",
+      "back": "Назад"
+    },
+    "cityPicker": {
+      "title": "Выберите город",
+      "searchPlaceholder": "Поиск города",
+      "allCities": "Все города",
+      "notFound": "Город не найден"
+    },
+    "filter": {
+      "title": "Услуги",
+      "buttonLabel": "Услуги",
+      "buttonLabelWithCount": "Услуги ({{count}})"
+    },
+    "navigatePicker": {
+      "title": "Открыть маршрут в…"
+    },
+    "list": {
+      "headerTitle": "Сервисные центры",
+      "searchPlaceholder": "Поиск сервиса",
+      "empty": "Ничего не найдено"
+    },
+    "detail": {
+      "servicesEmpty": "Список услуг временно недоступен",
+      "notFound": "Сервисный центр не найден",
+      "services": "Услуги",
+      "rateService": "Оцените сервис",
+      "onMap": "На карте",
+      "call": "Позвонить",
+      "route": "Маршрут"
+    },
+    "rating": {
+      "prompt": "Оцените ваш опыт визита",
+      "yourRating": "Ваша оценка: {{rating}} из 5",
+      "thankYou": "Спасибо за ваш отзыв!"
+    },
+    "serviceTypes": {
+      "washing": "Мойка",
+      "diagnostics": "Диагностика",
+      "oilChange": "Замена масла",
+      "engineRepair": "Ремонт двигателя",
+      "tireService": "Шиномонтаж",
+      "bodyRepair": "Кузовной ремонт"
+    },
+    "navApps": {
+      "apple": "Apple Карты",
+      "google": "Google Карты",
+      "waze": "Waze",
+      "yandex": "Яндекс Навигатор",
+      "yandex_maps": "Яндекс Карты",
+      "dgis": "2ГИС",
+      "web": "Google Карты (браузер)"
+    }
   }
 }

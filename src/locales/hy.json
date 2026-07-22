@@ -99,5 +99,64 @@
       "inProgress": "Վերանորոգում",
       "done": "Պատրաստ է"
     }
+  },
+  "services": {
+    "common": {
+      "search": "Փնտրել",
+      "cancel": "Չեղարկել",
+      "done": "Պատրաստ է",
+      "reset": "Զրոյացնել",
+      "back": "Հետ"
+    },
+    "cityPicker": {
+      "title": "Ընտրեք քաղաքը",
+      "searchPlaceholder": "Փնտրել քաղաք",
+      "allCities": "Բոլոր քաղաքները",
+      "notFound": "Քաղաքը չի գտնվել"
+    },
+    "filter": {
+      "title": "Ծառայություններ",
+      "buttonLabel": "Ծառայություններ",
+      "buttonLabelWithCount": "Ծառայություններ ({{count}})"
+    },
+    "navigatePicker": {
+      "title": "Բացել երթուղին…"
+    },
+    "list": {
+      "headerTitle": "Սպասարկման կենտրոններ",
+      "searchPlaceholder": "Փնտրել սպասարկում",
+      "empty": "Ոչինչ չի գտնվել"
+    },
+    "detail": {
+      "servicesEmpty": "Ծառայությունների ցանկը ժամանակավորապես հասանելի չէ",
+      "notFound": "Սպասարկման կենտրոնը չի գտնվել",
+      "services": "Ծառայություններ",
+      "rateService": "Գնահատել սպասարկումը",
+      "onMap": "Քարտեզի վրա",
+      "call": "Զանգահարել",
+      "route": "Երթուղի"
+    },
+    "rating": {
+      "prompt": "Գնահատեք Ձեր այցելության փորձը",
+      "yourRating": "Ձեր գնահատականը՝ {{rating}}-ը 5-ից",
+      "thankYou": "Շնորհակալություն կարծիքի համար:"
+    },
+    "serviceTypes": {
+      "washing": "Լվացում",
+      "diagnostics": "Ախտորոշում",
+      "oilChange": "Յուղի փոխարինում",
+      "engineRepair": "Շարժիչի վերանորոգում",
+      "tireService": "Անվադողերի սպասարկում",
+      "bodyRepair": "Թափքի վերանորոգում"
+    },
+    "navApps": {
+      "apple": "Apple Maps",
+      "google": "Google Maps",
+      "waze": "Waze",
+      "yandex": "Yandex Navigator",
+      "yandex_maps": "Yandex Maps",
+      "dgis": "2GIS",
+      "web": "Google Maps (Browser)"
+    }
   }
 }

@@ -15,7 +15,9 @@ module.exports = {
         LSApplicationQueriesSchemes: [
           "comgooglemaps",
           "waze",
-          "yandexnavi"
+          "yandexnavi",
+          "yandexmaps",
+          "dgis"
         ]
       }
     },
@@ -28,7 +30,6 @@ module.exports = {
       },
       predictiveBackGestureEnabled: false,
       package: "com.varuzhan.grandauto",
-      // Интегрируем Google Maps API ключ
       config: {
         googleMaps: {
           apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
@@ -44,7 +45,10 @@ module.exports = {
       [
         "expo-splash-screen",
         {
-          backgroundColor: "#208AEF",
+          backgroundColor: "#ffffff",
+          dark: {
+            backgroundColor: "#000000",
+          },
           android: {
             image: "./assets/images/splash-icon.png",
             imageWidth: 76

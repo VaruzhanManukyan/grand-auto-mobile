@@ -3,43 +3,34 @@
  *
  * Detects which navigation apps are actually installed on the device
  * and lets the user pick one, instead of always hard-opening Google
- * Maps. Apple Maps (iOS) is always available since it's a built-in
- * OS scheme — the rest (Google Maps, Waze, Yandex Navigator) need to
- * be probed via Linking.canOpenURL().
- *
- * IMPORTANT: canOpenURL() only sees these apps if you declare the
- * schemes/packages up front — see plugins/with-map-queries.js for
- * Android, and the LSApplicationQueriesSchemes note below for iOS.
- * Without that config, canOpenURL() silently returns false for all
- * of them and the picker will only ever show the web fallback.
+ * Maps.
  */
 import { Linking, Platform } from 'react-native';
 import { ServiceCenter } from '@/types/service.types';
 
 export interface NavigationApp {
     id: string;
-    label: string;
+    labelKey: string;
     getUrl: (center: ServiceCenter) => string;
 }
 
 const WEB_FALLBACK: NavigationApp = {
     id: 'web',
-    label: 'Google Maps (браузер)',
+    labelKey: 'services.navApps.web',
     getUrl: (c) => `https://www.google.com/maps/dir/?api=1&destination=${c.latitude},${c.longitude}`,
 };
 
-// probeUrl is only used to check installation — getUrl builds the real link
 const CANDIDATES: (NavigationApp & { probeUrl: string; platforms?: Array<'ios' | 'android'> })[] = [
     {
         id: 'apple',
-        label: 'Apple Карты',
+        labelKey: 'services.navApps.apple',
         platforms: ['ios'],
         probeUrl: 'maps://',
         getUrl: (c) => `maps://app?daddr=${c.latitude},${c.longitude}&dirflg=d`,
     },
     {
         id: 'google',
-        label: 'Google Карты',
+        labelKey: 'services.navApps.google',
         probeUrl: Platform.OS === 'ios' ? 'comgooglemaps://' : 'google.navigation:q=0,0',
         getUrl: (c) =>
             Platform.OS === 'ios'
@@ -48,15 +39,27 @@ const CANDIDATES: (NavigationApp & { probeUrl: string; platforms?: Array<'ios' |
     },
     {
         id: 'waze',
-        label: 'Waze',
+        labelKey: 'services.navApps.waze',
         probeUrl: 'waze://',
         getUrl: (c) => `waze://?ll=${c.latitude},${c.longitude}&navigate=yes`,
     },
     {
         id: 'yandex',
-        label: 'Яндекс Навигатор',
+        labelKey: 'services.navApps.yandex',
         probeUrl: 'yandexnavi://',
         getUrl: (c) => `yandexnavi://build_route_on_map?lat_to=${c.latitude}&lon_to=${c.longitude}`,
+    },
+    {
+        id: 'yandex_maps',
+        labelKey: 'services.navApps.yandex_maps',
+        probeUrl: 'yandexmaps://',
+        getUrl: (c) => `yandexmaps://maps.yandex.ru/?rtext=~${c.latitude},${c.longitude}&rtt=auto`,
+    },
+    {
+        id: 'dgis',
+        labelKey: 'services.navApps.dgis',
+        probeUrl: 'dgis://',
+        getUrl: (c) => `dgis://2gis.ru/routeSearch/rsType/car/to/${c.longitude},${c.latitude}`,
     },
 ];
 

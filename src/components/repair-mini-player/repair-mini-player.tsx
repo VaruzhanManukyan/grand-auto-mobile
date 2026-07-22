@@ -76,8 +76,6 @@ const RepairCard = React.memo(function RepairCard({session, index, translateX, o
                     colorScheme={scheme}
                     solidColor={theme.backgroundBar}
                 >
-                    <CircularProgress progress={session.progress} trackColor={theme.border}
-                                      progressColor={theme.accent}/>
                     <View style={styles.textBlock}>
                         <Text numberOfLines={1} style={[styles.title, {color: theme.textPrimary}]}>
                             {session.carLabel}
@@ -215,10 +213,10 @@ const styles = StyleSheet.create({
         gap: 10,
         borderRadius: 50,
         borderWidth: StyleSheet.hairlineWidth,
-        paddingVertical: 10,
-        paddingHorizontal: 12,
+        paddingVertical: 14,
+        paddingHorizontal: 14,
     },
-    textBlock: {flex: 1, minWidth: 0},
+    textBlock: {flex: 1, minWidth: 0, marginHorizontal: 15},
     title: {fontSize: 13, fontWeight: '500'},
     subtitle: {fontSize: 12, marginTop: 2},
 });
