@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
     useServicesStore,
@@ -16,6 +16,7 @@ import { ServiceList } from '@/components/services/service-list';
 import { CityPickerSheet } from '@/components/services/city-picker-sheet';
 import { ServiceFilterSheet } from '@/components/services/service-filter-sheet';
 import { NavigatePickerSheet } from '@/components/services/navigate-picker-sheet';
+import { LoadingOverlay } from '@/components/loading/loading-overlay'; // Import your custom overlay
 
 import { getAvailableNavigationApps, openWithApp, NavigationApp } from '@/utils/navigation-apps';
 import { ServiceCenter } from '@/types/service.types';
@@ -60,88 +61,87 @@ export default function ServicesScreen() {
         }
     };
 
-    if (isLoading && filteredCenters.length === 0) {
-        return (
-            <View style={[styles.centered, { backgroundColor: theme.background }]}>
-                <ActivityIndicator size="large" color={theme.accent} />
-            </View>
-        );
-    }
+    const showInitialLoading = isLoading && filteredCenters.length === 0;
 
     return (
         <View style={styles.container}>
-            {/* Map component handles panning & marker presses */}
-            <ServiceMap
-                centers={filteredCenters}
-                selectedCenterId={selectedCenterId}
-                onMarkerPress={(center) => selectCenter(center.id)}
-                onMapPress={() => selectCenter(null)}
-            />
+            <LoadingOverlay visible={showInitialLoading} mode="full" />
 
-            {/* Overlays */}
-            {selectedCenter ? (
-                <View
-                    style={[styles.miniCardDeck, { bottom: TAB_BAR_CLEARANCE }]}
-                    pointerEvents="box-none"
-                >
-                    <ServiceMiniCard
-                        visible={!!selectedCenter}
-                        center={selectedCenter}
-                        onPress={() => router.push(`/services/${selectedCenter.id}`)}
-                        onRoutePress={() => handleRoutePress(selectedCenter)}
-                        onClose={() => selectCenter(null)}
+            {!showInitialLoading && (
+                <>
+                    {/* Map component handles panning & marker presses */}
+                    <ServiceMap
+                        centers={filteredCenters}
+                        selectedCenterId={selectedCenterId}
+                        onMarkerPress={(center) => selectCenter(center.id)}
+                        onMapPress={() => selectCenter(null)}
                     />
-                </View>
-            ) : (
-                <ServiceList
-                    centers={filteredCenters}
-                    onSelect={selectCenter}
-                    isVisible={selectedCenterId === null && !isCityPickerOpen && !isServiceFilterOpen}
-                    selectedCity={selectedCity}
-                    isCityPickerOpen={isCityPickerOpen}
-                    setIsCityPickerOpen={setIsCityPickerOpen}
-                    selectedServicesCount={selectedServices.length}
-                    isServiceFilterOpen={isServiceFilterOpen}
-                    setIsServiceFilterOpen={setIsServiceFilterOpen}
-                />
+
+                    {/* Overlays */}
+                    {selectedCenter ? (
+                        <View
+                            style={[styles.miniCardDeck, { bottom: TAB_BAR_CLEARANCE }]}
+                            pointerEvents="box-none"
+                        >
+                            <ServiceMiniCard
+                                visible={!!selectedCenter}
+                                center={selectedCenter}
+                                onPress={() => router.push(`/services/${selectedCenter.id}`)}
+                                onRoutePress={() => handleRoutePress(selectedCenter)}
+                                onClose={() => selectCenter(null)}
+                            />
+                        </View>
+                    ) : (
+                        <ServiceList
+                            centers={filteredCenters}
+                            onSelect={selectCenter}
+                            isVisible={selectedCenterId === null && !isCityPickerOpen && !isServiceFilterOpen}
+                            selectedCity={selectedCity}
+                            isCityPickerOpen={isCityPickerOpen}
+                            setIsCityPickerOpen={setIsCityPickerOpen}
+                            selectedServicesCount={selectedServices.length}
+                            isServiceFilterOpen={isServiceFilterOpen}
+                            setIsServiceFilterOpen={setIsServiceFilterOpen}
+                        />
+                    )}
+
+                    {/* Bottom Sheets */}
+                    <CityPickerSheet
+                        visible={isCityPickerOpen}
+                        cities={cities}
+                        selectedCity={selectedCity}
+                        onSelect={(city) => {
+                            selectCity(city);
+                            setIsCityPickerOpen(false);
+                        }}
+                        onClose={() => setIsCityPickerOpen(false)}
+                    />
+
+                    <ServiceFilterSheet
+                        visible={isServiceFilterOpen}
+                        selected={selectedServices}
+                        onToggle={toggleService}
+                        onReset={resetServices}
+                        onClose={() => setIsServiceFilterOpen(false)}
+                    />
+
+                    <NavigatePickerSheet
+                        visible={isNavPickerOpen}
+                        apps={navApps}
+                        onSelect={(app) => {
+                            setIsNavPickerOpen(false);
+                            if (centerToNavigate) openWithApp(app, centerToNavigate);
+                        }}
+                        onClose={() => setIsNavPickerOpen(false)}
+                    />
+                </>
             )}
-
-            {/* Bottom Sheets */}
-            <CityPickerSheet
-                visible={isCityPickerOpen}
-                cities={cities}
-                selectedCity={selectedCity}
-                onSelect={(city) => {
-                    selectCity(city);
-                    setIsCityPickerOpen(false);
-                }}
-                onClose={() => setIsCityPickerOpen(false)}
-            />
-
-            <ServiceFilterSheet
-                visible={isServiceFilterOpen}
-                selected={selectedServices}
-                onToggle={toggleService}
-                onReset={resetServices}
-                onClose={() => setIsServiceFilterOpen(false)}
-            />
-
-            <NavigatePickerSheet
-                visible={isNavPickerOpen}
-                apps={navApps}
-                onSelect={(app) => {
-                    setIsNavPickerOpen(false);
-                    if (centerToNavigate) openWithApp(app, centerToNavigate);
-                }}
-                onClose={() => setIsNavPickerOpen(false)}
-            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     miniCardDeck: {
         position: 'absolute',
         width: '90%',

@@ -60,5 +60,5 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         gap: 6,
     },
-    label: { fontSize: 15, fontWeight: '700' },
+    label: { fontSize: 13, fontWeight: '700' },
 });

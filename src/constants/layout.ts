@@ -10,4 +10,4 @@ import { Platform } from 'react-native';
 // insets.bottom. insets.bottom doesn't reliably reflect this custom
 // bar's real footprint, and was observed to diverge between a Pixel
 // emulator and a real Samsung device.
-export const TAB_BAR_CLEARANCE = Platform.OS === 'ios' ? 172 : 110;
+export const TAB_BAR_CLEARANCE = Platform.OS === 'ios' ? 172 : 98;

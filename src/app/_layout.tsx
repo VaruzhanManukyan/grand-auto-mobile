@@ -25,7 +25,7 @@ export default function RootLayout() {
             await initI18n();
             await init();
             const needsPicker = await needsLanguagePicker();
-            setShowLangPicker(needsPicker);
+            setShowLangPicker(true);
             setAppReady(true);
         })();
     }, []);

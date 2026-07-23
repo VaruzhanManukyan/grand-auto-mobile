@@ -1,7 +1,7 @@
-import React, {forwardRef, useEffect} from 'react';
-import {Pressable, PressableProps, StyleSheet, View, Image, useColorScheme} from 'react-native';
-import Animated, {interpolate, useAnimatedStyle, useSharedValue, withSpring} from "react-native-reanimated";
-import {Colors} from "@/constants/theme";
+import React, { forwardRef, useEffect } from 'react';
+import { Pressable, PressableProps, StyleSheet, View, Image, useColorScheme } from 'react-native';
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { Colors } from "@/constants/theme";
 
 type Props = PressableProps & {
     label: string;
@@ -31,24 +31,24 @@ export const TabButton = forwardRef<View, Props>(({
     const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
     useEffect(() => {
-        scale.value = withSpring(focused ? 1 : 0, {duration: 300});
+        scale.value = withSpring(focused ? 1 : 0, { duration: 300 });
     }, [focused]);
 
     const animatedTextStyle = useAnimatedStyle(() => {
         const opacity = isFloating ? 0 : interpolate(scale.value, [0, 1], [1, 0]);
-        return {opacity};
+        return { opacity };
     });
 
     const animatedIconStyle = useAnimatedStyle(() => {
         if (isFloating) {
             const scaleValue = withSpring(focused ? 1.3 : 1);
-            return {transform: [{scale: scaleValue}]};
+            return { transform: [{ scale: scaleValue }] };
         }
 
         const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2]);
         const top = interpolate(scale.value, [0, 1], [0, 8]);
         return {
-            transform: [{scale: scaleValue}],
+            transform: [{ scale: scaleValue }],
             top,
         };
     });
@@ -63,7 +63,6 @@ export const TabButton = forwardRef<View, Props>(({
         }]
         : styles.standardButton;
 
-
     const activeColor = '#ff0000';
 
     const iconColor = isFloating
@@ -73,7 +72,6 @@ export const TabButton = forwardRef<View, Props>(({
     return (
         <Pressable ref={ref} {...props} style={buttonStyle}>
             <Animated.View style={animatedIconStyle}>
-
                 {iconSource ? (
                     <Image
                         source={iconSource}
@@ -85,15 +83,25 @@ export const TabButton = forwardRef<View, Props>(({
                         }}
                     />
                 ) : (
-                    <View style={{width: iconSize, height: iconSize, backgroundColor: '#e74c3c', borderRadius: 6}}/>
+                    <View style={{ width: iconSize, height: iconSize, backgroundColor: '#e74c3c', borderRadius: 6 }} />
                 )}
-
             </Animated.View>
 
             {!isFloating && (
-                <Animated.Text style={[{color: colors.text, fontSize: 11, marginTop: 2}, animatedTextStyle]}>
-                    {label}
-                </Animated.Text>
+                <View style={styles.labelWrapper}>
+                    <Animated.Text
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                        minimumFontScale={0.8}
+                        style={[
+                            styles.labelText,
+                            { color: colors.text },
+                            animatedTextStyle
+                        ]}
+                    >
+                        {label}
+                    </Animated.Text>
+                </View>
             )}
         </Pressable>
     );
@@ -105,6 +113,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
+        paddingHorizontal: 2, // Replaced fixed width: 70 to give flex growth room
     },
     floatingButton: {
         width: 65,
@@ -112,9 +121,23 @@ const styles = StyleSheet.create({
         borderRadius: 32.5,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowOffset: {width: 0, height: 0},
+        shadowOffset: { width: 0, height: 0 },
         shadowRadius: 35,
         shadowOpacity: 0.35,
         elevation: 5,
+    },
+    labelWrapper: {
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 2,
+        paddingHorizontal: 1,
+    },
+    labelText: {
+        fontSize: 10,
+        lineHeight: 13,
+        textAlign: 'center',
+        includeFontPadding: false,
+        width: '100%',
     }
 });

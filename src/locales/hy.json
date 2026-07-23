@@ -111,20 +111,20 @@
     "cityPicker": {
       "title": "Ընտրեք քաղաքը",
       "searchPlaceholder": "Փնտրել քաղաք",
-      "allCities": "Բոլոր քաղաքները",
+      "allCities": "Քաղաքները",
       "notFound": "Քաղաքը չի գտնվել"
     },
     "filter": {
-      "title": "Ծառայություններ",
-      "buttonLabel": "Ծառայություններ",
-      "buttonLabelWithCount": "Ծառայություններ ({{count}})"
+      "title": "Սերվիսներ",
+      "buttonLabel": "Սերվիսներ",
+      "buttonLabelWithCount": "Սերվիսներ ({{count}})"
     },
     "navigatePicker": {
       "title": "Բացել երթուղին…"
     },
     "list": {
       "headerTitle": "Սպասարկման կենտրոններ",
-      "searchPlaceholder": "Փնտրել սպասարկում",
+      "searchPlaceholder": "Փնտրել սերվիսներ",
       "empty": "Ոչինչ չի գտնվել"
     },
     "detail": {
@@ -150,13 +150,13 @@
       "bodyRepair": "Թափքի վերանորոգում"
     },
     "navApps": {
-      "apple": "Apple Maps",
-      "google": "Google Maps",
+      "apple": "Apple Քարտեզներ",
+      "google": "Google Քարտեզներ",
       "waze": "Waze",
-      "yandex": "Yandex Navigator",
-      "yandex_maps": "Yandex Maps",
+      "yandex": "Yandex Նավիգատոր",
+      "yandex_maps": "Yandex Քարտեզներ",
       "dgis": "2GIS",
-      "web": "Google Maps (Browser)"
+      "web": "Google Քարտեզներ (Բրաուզեր)"
     }
   }
 }

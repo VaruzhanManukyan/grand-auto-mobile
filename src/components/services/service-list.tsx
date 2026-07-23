@@ -251,7 +251,8 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         fontSize: 16,
-        fontWeight: '600'
+        fontWeight: '600',
+        alignSelf: 'center'
     },
     searchBar: {
         marginHorizontal: 16,

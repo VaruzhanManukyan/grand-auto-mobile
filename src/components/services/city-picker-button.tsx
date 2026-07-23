@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'flex-start',
+        maxWidth: 150,
         paddingHorizontal: 16,
         paddingVertical: 10,
         borderRadius: 20,
@@ -82,7 +83,10 @@ const styles = StyleSheet.create({
     contentWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
+        maxWidth: 150,
+
         gap: 6,
     },
-    label: { fontSize: 15, fontWeight: '700' },
+    label: { fontSize: 13, fontWeight: '700', maxWidth: 105,
+    },
 });

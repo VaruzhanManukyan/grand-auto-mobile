@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Animated, Pressable, Linking, Share, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Animated, Pressable, Linking, Share } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,6 +13,7 @@ import { ServiceDetailServicesGrid } from '@/components/services/service-detail-
 import { ServiceDetailMap } from '@/components/services/service-detail-map';
 import { ServiceRatingInput } from '@/components/services/service-rating-input';
 import { NavigatePickerSheet } from '@/components/services/navigate-picker-sheet';
+import { LoadingOverlay } from '@/components/loading/loading-overlay'; // Import your custom overlay
 import { getAvailableNavigationApps, openWithApp, NavigationApp } from '@/utils/navigation-apps';
 
 const HERO_HEIGHT = 300;
@@ -29,7 +30,6 @@ export default function ServiceDetailScreen() {
     const { centers, isLoading, fetch, userRatings, rateCenter } = useServicesStore();
 
     const center = centers.find((c) => String(c.id) === String(paramId)) ?? null;
-
     const myRating = center ? userRatings?.[center.id] ?? null : null;
 
     const [isNavPickerOpen, setIsNavPickerOpen] = useState(false);
@@ -65,11 +65,7 @@ export default function ServiceDetailScreen() {
     const isFetchingInitial = isLoading || (centers.length === 0 && !center);
 
     if (isFetchingInitial) {
-        return (
-            <View style={[styles.centered, { backgroundColor: theme.background }]}>
-                <ActivityIndicator size="large" color={theme.accent} />
-            </View>
-        );
+        return <LoadingOverlay visible={true} mode="full" />;
     }
 
     if (!center) {
@@ -257,6 +253,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         borderWidth: 1.5,
     },
-    actionButtonText: { color: '#fff', fontWeight: '700', fontSize: 15 },
-    actionButtonGhostText: { fontWeight: '700', fontSize: 15 },
+    actionButtonText: { color: '#fff', fontWeight: '700', fontSize: 13 },
+    actionButtonGhostText: { fontWeight: '700', fontSize: 13 },
 });
